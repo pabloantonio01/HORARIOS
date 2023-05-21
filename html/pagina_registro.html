@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Página de registro">
+        <meta name="author" content="Hecho por José Gadea Rodríguez, Pablo Antonio Martínez Vicente y Javier García García">
+        
+        <title>Página de registro</title>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
+        <script src="/js/login.js"></script>
+
+    </head>
+
+    <body>
+        <h1>Página de registro</h1>
+        <div ng-app='registro'>
+            <div ng-controller='reg'>
+                <label>
+                    Correo electrónico:<input type="email" ng-model="email">
+                </label><br>
+                <label>
+                    Contraseña:<input type="password" ng-model="password">
+                </label><br>
+                <button ng-click="cargar()">Registro hecho</button>
+            </div>
+        </div>
+    </body>
+
+</html>
