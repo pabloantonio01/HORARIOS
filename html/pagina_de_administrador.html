@@ -48,7 +48,7 @@
             </nav>
         </header>
 
-        <div ng-app="Obtener datos">
+        <div ng-app="Obtener_datos">
             <div ng-controller="datos">
                 <table id="Tabla_datos">
                     <tr id="Fila principal">
@@ -56,11 +56,14 @@
                         <th>Categorias</th>
                         <th>Vídeos</th>
                     </tr>
-                    <tr ng-repeat="s in res">
+                    <tr ng-repeat="s in resUsuarios.usuarios">
+                        <td>{{s.nombre}}</td>
                     </tr>
-                    <tr ng-repeat="s in res">
+                    <tr ng-repeat="s in resCategorias.categorias">
+                        <td>{{s.nombre}}</td>
                     </tr>
-                    <tr ng-repeat="s in res">
+                    <tr ng-repeat="s in resVideos.videos">
+                        <td><a href={{s.url}}></a>{{s.nombre}}</td>
                     </tr>
                 </table>
                 </div>
