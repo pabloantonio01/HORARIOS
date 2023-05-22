@@ -1,10 +1,73 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="Página de registro">
         <meta name="author" content="Hecho por José Gadea Rodríguez, Pablo Antonio Martínez Vicente y Javier García García">
-        <title></title>
+
+        <title>Página de administrador</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
+        <script src="/js/poner_datos.js"></script>
+
     </head>
+
+    <body>
+
+        <header>
+            <nav>
+                <h1>Página de administración</h1>
+                <table>
+                    <tr id="Fila principal">
+                        <th>Usuarios</th>
+                        <th>Categorias</th>
+                        <th>Vídeos</th>
+                        <th><a href="/html/pagina_registro.html">Salir de esta página</a></th>
+                    </tr>
+                    <tr id="Crear">
+                        <td><a href="/html/registro_usuario.html">Crear</a></td>
+                        <td><a href="/html/registro_categoria.html">Crear</a></td>
+                        <td><a href="/html/registro_video.html">Crear</a></td>
+                    </tr>
+                    <tr id="Modificar">
+                        <td><a href="/html/modificar_usuario.html">Modificar</a></td>
+                        <td><a href="/html/modificar_categoria.html">Modificar</a></td>
+                        <td><a href="/html/modificar_video.html">Modificar</a></td>
+                    </tr>
+                    <tr id="Eliminar">
+                        <td><a href="/html/eliminar_usuario.html">Eliminar</a></td>
+                        <td><a href="/html/eliminar_categoria.html">Eliminar</a></td>
+                        <td><a href="/html/eliminar_video.html">Eliminar</a></td>
+                    </tr>
+                    <tr>
+                    </tr>
+                </table><br>
+            </nav>
+        </header>
+
+        <div ng-app="Obtener datos">
+            <div ng-controller="datos">
+                <table id="Tabla_datos">
+                    <tr id="Fila principal">
+                        <th>Usuarios</th>
+                        <th>Categorias</th>
+                        <th>Vídeos</th>
+                    </tr>
+                    <tr ng-repeat="s in res">
+                    </tr>
+                    <tr ng-repeat="s in res">
+                    </tr>
+                    <tr ng-repeat="s in res">
+                    </tr>
+                </table>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+
 </html>
