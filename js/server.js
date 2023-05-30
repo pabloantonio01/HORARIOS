@@ -3,24 +3,22 @@
 /* Se genera el servidor */
 const express = require('express');
 const server = express();
+const session = require('express-session')
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
 const sqlite3 = require('sqlite3').verbose();
-const dotenv = require('dotenv');
-const crypto = require('crypto');
-const secret = process.env.secret;
 const port = 3000;
-const cors = require('cors');
 const router = express.Router();
+const sesscfg = {
+    secret: 'practicas-lsi-2023',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 8*60*60*1000 } // 8 working hours
+};
+server.use(session(sesscfg));
 
 /* Configuración del servidor*/
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
-server.use('/html', express.static('.'));
-server.use('/html', router);
-server.use(cors)
-dotenv.config();
-const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 var db = new sqlite3.Database(
     'datos.db',
@@ -30,9 +28,14 @@ var db = new sqlite3.Database(
     }       
 );
 
+server.get('/', function(req, res) {
+    res.send('Hola Mundo!');
+  });
+
 /* Configurar rutas*/
 router.post('/api/auth/login', function(req, res){
-    if(!req.body.email || req.body.password){
+    console.log('Realizando registro');
+    if(req.body.email==undefined || req.body.password==undefined){
         res.json({Error: 'Petición mal formada'});
     }
     else{
@@ -41,9 +44,11 @@ router.post('/api/auth/login', function(req, res){
 });
 
 function processLogin(req, res, db){
+    var id = req.body.user_id
     var email = req.body.email;
     var password = req.body.password;
-
+    console.log(email);
+    console.log(password);
     db.get(
         'SELECT * FROM users WHERE email=?', email,
         function(err, row){
@@ -58,22 +63,19 @@ function processLogin(req, res, db){
                     id: row.id,
                     email: row.email,
                     username: row.username,
-                    token: generarTokenDeUsuario(row.username)
                 }
                 res.json(data);
+                console.log('Registro correcto');
             }
         }
 )};
 
+server.use(express.static('.'));
+server.use(router);
+
 server.listen(port, function(){
     console.log(`Servidor corriendo por el puerto ${port}`);
 });
-
-/* PROCESAMIENTO DE DATOS */
-
-function generarTokenDeUsuario(user) {
-    return jwt.sign({user: user}, TOKEN_SECRET);
-}
 
 
 
