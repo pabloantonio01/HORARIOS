@@ -3,7 +3,7 @@
 /* Se genera el servidor */
 const express = require('express');
 const server = express();
-const session = require('express-session')
+const session = require('express-session');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const port = 3000;
@@ -15,6 +15,7 @@ const sesscfg = {
     cookie: { maxAge: 8*60*60*1000 } // 8 working hours
 };
 server.use(session(sesscfg));
+
 
 /* Configuración del servidor*/
 server.use(bodyParser.urlencoded({ extended: false }));
@@ -39,12 +40,11 @@ router.post('/api/auth/login', function(req, res){
         res.json({Error: 'Petición mal formada'});
     }
     else{
-        processLogin(req, res, db);
+        res = processLogin(req, res, db);
     }
 });
 
 function processLogin(req, res, db){
-    var id = req.body.user_id
     var email = req.body.email;
     var password = req.body.password;
     console.log(email);
@@ -59,16 +59,62 @@ function processLogin(req, res, db){
                 res.json({Error: 'Contraseña mal introducida'});
             }
             else{
+                req.session.username = row.username;
                 var data = {
-                    id: row.id,
                     email: row.email,
                     username: row.username,
+                    role: row.role
                 }
-                res.json(data);
                 console.log('Registro correcto');
+                return res.json(data);
             }
         }
 )};
+
+router.get('/api/users', function(req, res){
+    listarUsuarios(req, res, db);
+});
+
+function listarUsuarios(req, res, db){
+    var name = req.session.username;
+    db.all(
+        'SELECT email, username, role FROM users WHERE username=?', name,
+        function(err, rows){
+            res.json(rows);
+        }
+    )
+};
+
+router.get('/api/categorias', function(req, res){
+    listarCategorias(req, res, db);
+});
+
+function listarCategorias(req, res, db){
+    var name = req.session.username;
+    console.log(name);
+    db.all(
+        'SELECT name FROM categorias WHERE creator=?', name,
+        function(err, rows){
+            res.json(rows);
+        }
+    )
+};
+
+router.get('/api/videos', function(req, res){
+    listarVideos(req, res, db);
+});
+
+function listarVideos(req, res, db){
+    var name = req.session.username;
+    console.log(name);
+    db.all(
+        'SELECT name, url FROM videos WHERE creator=?', name,
+        function(err, rows){
+            res.json(rows);
+        }
+    )
+};
+
 
 server.use(express.static('.'));
 server.use(router);
