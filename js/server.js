@@ -60,6 +60,7 @@ function processLogin(req, res, db){
             }
             else{
                 req.session.username = row.username;
+                req.session.role = row.role;
                 var data = {
                     email: row.email,
                     username: row.username,
@@ -78,7 +79,7 @@ router.get('/api/users', function(req, res){
 function listarUsuarios(req, res, db){
     var name = req.session.username;
     db.all(
-        'SELECT email, username, role FROM users WHERE username=?', name,
+        'SELECT email, username, role FROM users',
         function(err, rows){
             res.json(rows);
         }
@@ -114,6 +115,84 @@ function listarVideos(req, res, db){
         }
     )
 };
+
+router.post('/api/users', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+    }
+    else{
+        crearUsuarios(req, res, db);
+    }
+});
+
+function crearUsuarios(req, res, db){
+    var role = 'user';
+
+    db.get(
+        'INSERT INTO users (email, password, username, role) VALUES (?,?,?,?)', req.body.email, req.body.password, req.body.username, role,
+        function(err){
+            if(err == true || req.body.email == undefined || req.body.password == undefined || req.body.username == undefined){
+                res.json({Error: 'Error al crear usuario'});
+            }
+            else{
+                res.json({Bien: 'Usuario creado'});
+            }
+        }
+    )
+};
+
+router.put('/api/users', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+    }
+    else{
+        modificarUsuarios(req, res, db);
+    }
+});
+
+function modificarUsuarios(req, res, db){
+    var email = req.body.email;
+    var contraseña = req.body.password;
+    var new_name = req.body.new_name;
+    var old_email = req.body.old_email;
+    db.get(
+        'UPDATE users SET email=?, password=?, username=? WHERE email=?', email, contraseña, new_name, old_email,
+        function(err, row){
+            if(err == true || email == undefined || contraseña == undefined || new_name == undefined, old_email == undefined){
+                res.json({Error: 'Error al modificar usuario'});
+            }
+            else{
+                res.json({Bien: 'Usuario modificado'});
+            }
+        }
+    )
+}
+
+
+router.delete('/api/users', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+    }
+    else{
+        eliminarUsuarios(req, res, db);
+    }
+});
+
+function eliminarUsuarios(req, res, db){
+    var email = req.body.email;
+    db.get(
+        'DELETE FROM users WHERE email=?', email,
+        function(err){
+            if(err == true || email == undefined){
+                res.json({Error: 'Error al eliminar usuario'});
+            }
+            else{
+                res.json({Bien: 'Usuario eliminado'});
+            }
+        }
+    )
+};
+
 
 
 server.use(express.static('.'));
