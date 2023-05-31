@@ -33,7 +33,7 @@ server.get('/', function(req, res) {
     res.send('Hola Mundo!');
   });
 
-/* Configurar rutas*/
+/* Configurar rutas y funciones necesarias del API REST*/
 router.post('/api/auth/login', function(req, res){
     console.log('Realizando registro');
     if(req.body.email==undefined || req.body.password==undefined){
@@ -109,7 +109,7 @@ function listarVideos(req, res, db){
     var name = req.session.username;
     console.log(name);
     db.all(
-        'SELECT name, url FROM videos WHERE creator=?', name,
+        'SELECT name, url, category FROM videos',
         function(err, rows){
             res.json(rows);
         }
@@ -127,7 +127,6 @@ router.post('/api/users', function(req, res){
 
 function crearUsuarios(req, res, db){
     var role = 'user';
-
     db.get(
         'INSERT INTO users (email, password, username, role) VALUES (?,?,?,?)', req.body.email, req.body.password, req.body.username, role,
         function(err){
@@ -140,6 +139,31 @@ function crearUsuarios(req, res, db){
         }
     )
 };
+
+router.post('/api/categorias', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+    }
+    else{
+        crearCategorias(req, res, db);
+    }
+});
+
+function crearCategorias(req, res, db){
+    var creator = req.session.username;
+    var name = req.body.name;
+    db.get(
+        'INSERT INTO categorias (name, creator) VALUES (?,?)', name, creator,
+        function(err){
+            if(err == true || creator == undefined || name == undefined){
+                res.json({Error: 'Error al crear categoría'})
+            }
+            else{
+                res.json({Bien: 'Categoría creada'})
+            }
+        }
+)};
+
 
 router.put('/api/users', function(req, res){
     if(req.session.role != 'admin'){
@@ -156,17 +180,63 @@ function modificarUsuarios(req, res, db){
     var new_name = req.body.new_name;
     var old_email = req.body.old_email;
     db.get(
-        'UPDATE users SET email=?, password=?, username=? WHERE email=?', email, contraseña, new_name, old_email,
+        'SELECT * FROM users WHERE email=?', old_email,
         function(err, row){
-            if(err == true || email == undefined || contraseña == undefined || new_name == undefined, old_email == undefined){
-                res.json({Error: 'Error al modificar usuario'});
+            if(err || row == undefined){
+                res.json({Error: 'Usuario inexistente en la base de datos'});
             }
             else{
-                res.json({Bien: 'Usuario modificado'});
+                db.get(
+                    'UPDATE users SET email=?, password=?, username=? WHERE email=?', email, contraseña, new_name, old_email,
+                    function(err){
+                        if(err == true || email == undefined || contraseña == undefined || new_name == undefined, old_email == undefined){
+                            res.json({Error: 'Error al modificar usuario'});
+                        }
+                        else{
+                            res.json({Bien: 'Usuario modificado'});
+                        }
+                    }
+                )
             }
         }
-    )
-}
+)};
+
+router.put('/api/categorias', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+    }
+    else{
+        modificarCategorias(req, res, db);
+    }
+});
+
+function modificarCategorias(req, res, db){
+    var old_name = req.body.old_name;
+    var new_name = req.body.new_name;
+    var creator = req.session.username;
+    
+    db.get(
+        'SELECT * FROM categorias WHERE name=?', old_name,
+            function(err, row){
+                if(err || row == undefined){
+                    res.json({Error: 'Categoría inexistente en la base de datos'});
+                }
+                else{
+                    db.get(
+                        'UPDATE categorias SET name=?, creator=? WHERE name=?', new_name, creator, old_name,
+                            function(err){
+                                if(err == true || new_name == undefined){
+                                    res.json({Error: 'Error al modificar categoría'});
+                                }
+                                else{
+                                        res.json('Categoría modificada correctamente');
+                                }
+                            }
+                    )
+                }
+            }
+)};
+    
 
 
 router.delete('/api/users', function(req, res){
@@ -181,19 +251,49 @@ router.delete('/api/users', function(req, res){
 function eliminarUsuarios(req, res, db){
     var email = req.body.email;
     db.get(
-        'DELETE FROM users WHERE email=?', email,
-        function(err){
-            if(err == true || email == undefined){
-                res.json({Error: 'Error al eliminar usuario'});
+        'SELECT * FROM users WHERE email=?', email,
+        function(err, row){
+            if(err || row == undefined){
+                res.json({Error: 'Usuario inexistente en la base de datos'});
             }
             else{
-                res.json({Bien: 'Usuario eliminado'});
+                db.get(
+                    'DELETE FROM users WHERE email=?', email,
+                    function(err){
+                        if(err == true){
+                            res.json({Error: 'Error al eliminar usuario'});
+                        }
+                        else{
+                            res.json({Bien: 'Usuario eliminado'});
+                        }
+                    }
+                )
             }
         }
-    )
-};
+)};
 
+router.delete('/api/categorias', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+    }
+    else{
+        eliminarCategorias(req, res, db);
+    }
+});
 
+function eliminarCategorias(req, res, db){
+    var name = req.body.name;
+    var creator = req.session.username;
+    db.get('DELETE FROM categorias WHERE name=?', name,
+        function(err){
+            if(err){
+                res.json({Error: 'Error al eliminar categoría'});
+            }
+            else{
+                res.json({Bien: 'Categoría eliminada'});
+            }
+        }
+)};
 
 server.use(express.static('.'));
 server.use(router);
