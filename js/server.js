@@ -16,7 +16,6 @@ const sesscfg = {
 };
 server.use(session(sesscfg));
 
-
 /* Configuración del servidor*/
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
@@ -92,7 +91,6 @@ router.get('/api/categorias', function(req, res){
 
 function listarCategorias(req, res, db){
     var name = req.session.username;
-    console.log(name);
     db.all(
         'SELECT name FROM categorias WHERE creator=?', name,
         function(err, rows){
@@ -107,7 +105,6 @@ router.get('/api/videos', function(req, res){
 
 function listarVideos(req, res, db){
     var name = req.session.username;
-    console.log(name);
     db.all(
         'SELECT name, url, category FROM videos',
         function(err, rows){
@@ -164,6 +161,42 @@ function crearCategorias(req, res, db){
         }
 )};
 
+router.post('/api/videos', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar videos'});
+    }
+    else{
+        crearVideos(req, res, db);
+    }
+});
+
+function crearVideos(req, res, db){
+    var name = req.body.name;
+    var creator = req.session.username;
+    var url = req.body.url;
+    var category = req.body.category;
+
+    db.get(
+        'SELECT * FROM categorias WHERE name=?', category,
+        function(err, row){
+            if(err == true || row == undefined){
+                res.json({Error: 'La categoría introducida no existe en la base de datos'});
+            }
+            else{
+                db.get(
+                    'INSERT INTO videos (name, creator, url, category) VALUES (?,?,?,?)', name, creator, url, category,
+                    function(err){
+                        if(name == undefined || url == undefined || creator == undefined){
+                            res.json({Error: 'Error al crear vídeo'});
+                        }
+                        else{
+                            res.json({Bien: 'Vídeo creado'});
+                        }
+                    }
+                )
+            }
+        }
+)};
 
 router.put('/api/users', function(req, res){
     if(req.session.role != 'admin'){
@@ -237,7 +270,43 @@ function modificarCategorias(req, res, db){
             }
 )};
     
+router.put('/api/videos', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar videos'});
+    }
+    else{
+        modificarVideos(req, res, db);
+    }
+});
 
+function modificarVideos(req, res, db){
+    var old_name = req.body.old_name;
+    var new_name = req.body.new_name;
+    var url = req.body.url;
+    var category = req.body.category;
+    var creator = req.session.username;
+    db.get(
+        'SELECT * FROM categorias WHERE name=?', category,
+            function(err, row){
+                if(err || row == undefined){
+                    res.json({Error: 'Categoría inexistente en la base de datos'});
+                }
+                else{
+                    db.get(
+                        'UPDATE videos SET name=?, creator=?, url=? WHERE name=?', new_name, creator, url, old_name,
+                            function(err){
+                                if(err == true || new_name == undefined || old_name == undefined || url == undefined){
+                                    res.json({Error: 'Error al modificar vídeo'});
+                                }
+                                else{
+                                        res.json('Vídeo modificado correctamente');
+                                }
+                            }
+                    )
+                }
+            }
+
+)};
 
 router.delete('/api/users', function(req, res){
     if(req.session.role != 'admin'){
@@ -283,7 +352,6 @@ router.delete('/api/categorias', function(req, res){
 
 function eliminarCategorias(req, res, db){
     var name = req.body.name;
-    var creator = req.session.username;
     db.get('DELETE FROM categorias WHERE name=?', name,
         function(err){
             if(err){
@@ -291,6 +359,28 @@ function eliminarCategorias(req, res, db){
             }
             else{
                 res.json({Bien: 'Categoría eliminada'});
+            }
+        }
+)};
+
+router.delete('/api/videos', function(req, res){
+    if(req.session.role != 'admin'){
+        res.json({Error: 'No puede crear, eliminar o modificar vídeos'});
+    }
+    else{
+        eliminarVideos(req, res, db);
+    }
+});
+
+function eliminarVideos(req, res, db){
+    var name = req.body.name;
+    db.get('DELETE FROM videos WHERE name=?', name,
+        function(err){
+            if(err){
+                res.json({Error: 'Error al eliminar vídeo'});
+            }
+            else{
+                res.json({Bien: 'Vídeo eliminado'});
             }
         }
 )};
