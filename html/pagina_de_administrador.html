@@ -15,40 +15,47 @@
 
     </head>
 
-    <body>
+    <body ng-app="mainApp">
 
         <header>
             <nav>
                 <h1>Página de administración</h1>
-                <table>
-                    <tr id="Fila principal">
-                        <th>Usuarios</th>
-                        <th>Categorias</th>
-                        <th>Vídeos</th>
-                        <th><a href="/html/pagina_registro.html">Salir de esta página</a></th>
-                    </tr>
-                    <tr id="Crear">
-                        <td><a href="/html/registro_usuario.html">Crear</a></td>
-                        <td><a href="/html/registro_categoria.html">Crear</a></td>
-                        <td><a href="/html/registro_video.html">Crear</a></td>
-                    </tr>
-                    <tr id="Modificar">
-                        <td><a href="/html/modificar_usuario.html">Modificar</a></td>
-                        <td><a href="/html/modificar_categoria.html">Modificar</a></td>
-                        <td><a href="/html/modificar_video.html">Modificar</a></td>
-                    </tr>
-                    <tr id="Eliminar">
-                        <td><a href="/html/eliminar_usuario.html">Eliminar</a></td>
-                        <td><a href="/html/eliminar_categoria.html">Eliminar</a></td>
-                        <td><a href="/html/eliminar_video.html">Eliminar</a></td>
-                    </tr>
-                    <tr>
-                    </tr>
-                </table><br>
+                
+                <a href="/html/pagina_registro.html">Salir de esta página</a>
             </nav>
         </header>
+        <div>
+            <table>
+                <tr id="Fila principal">
+                    <th>Usuarios</th>
+                    <th>Categorías</th>
+                    <th>Vídeos</th>
+                </tr>
+                <tr id="Crear">
+                    <td><a ng-href="#!/registro_usuario">Crear Usuario</a></td>
+                    
+                    <td><a ng-href="#!/registro_categoria">Crear Categoría</a></td>
+                    <td><a ng-href="#!/registro_video">Crear Vídeo</a></td>
+                </tr>
+                <tr id="Modificar">
+                    <td><a ng-href="#!/modificar_usuario">Modificar Usuario</a></td>
+                    
+                    <td><a ng-href="#!/modificar_categoria">Modificar Categoría</a></td>
+                    <td><a ng-href="#!/modificar_video">Modificar Vídeo</a></td>
+                </tr>
+                <tr id="Eliminar">
+                    <td><a ng-href="#!/eliminar_usuario">Eliminar Usuario</a></td>
+                    
+                    <td><a ng-href="#!/eliminar_categoria">Eliminar Categoría</a></td>
+                    <td><a ng-href="#!/eliminar_video">Eliminar Vídeo</a></td>
+                </tr>
+            </table>
+        
+            <td><div ng-view></div></td>
 
-        <div ng-app="Obtener_datos">
+            <button ng-controller="RegistroController" type="button" ng-click="ocultarVista()">Ocultar Vista</button>
+
+        
             <div ng-controller="datos">
                 <table id="Tabla_datos">
                     <tr id="Fila principal">
@@ -56,14 +63,11 @@
                         <th>Categorias</th>
                         <th>Vídeos</th>
                     </tr>
-                    <tr ng-repeat="s in resUsuarios.usuarios">
-                        <td>{{s.nombre}}</td>
+                    <tr ng-repeat="s in res">
                     </tr>
-                    <tr ng-repeat="s in resCategorias.categorias">
-                        <td>{{s.nombre}}</td>
+                    <tr ng-repeat="s in res">
                     </tr>
-                    <tr ng-repeat="s in resVideos.videos">
-                        <td><a href={{s.url}}></a>{{s.nombre}}</td>
+                    <tr ng-repeat="s in res">
                     </tr>
                 </table>
                 </div>

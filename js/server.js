@@ -5,16 +5,12 @@ const express = require('express');
 const server = express();
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 const sqlite3 = require('sqlite3').verbose();
 const port = 3000;
 const router = express.Router();
-const sesscfg = {
-    secret: 'practicas-lsi-2023',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 8*60*60*1000 } // 8 working hours
-};
-server.use(session(sesscfg));
+var username = null;
+var role = null;
 
 /* Configuración del servidor*/
 server.use(bodyParser.urlencoded({ extended: false }));
@@ -58,25 +54,34 @@ function processLogin(req, res, db){
                 res.json({Error: 'Contraseña mal introducida'});
             }
             else{
-                req.session.username = row.username;
-                req.session.role = row.role;
-                var data = {
-                    email: row.email,
-                    username: row.username,
-                    role: row.role
-                }
-                console.log('Registro correcto');
-                return res.json(data);
+                username = row.username;
+                role = row.role;
+                jwt.sign({username}, 'secretKey', {expiresIn: '1h'}, (err, token) => {
+                    var data = {
+                        email: row.email,
+                        username: row.username,
+                        role: row.role,
+                        secret_token: token
+                    }
+                    console.log('Registro correcto');
+                    res.json(data);
+                });
             }
         }
 )};
 
-router.get('/api/users', function(req, res){
-    listarUsuarios(req, res, db);
+router.get('/api/users', verifyToken,function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else{
+            listarUsuarios(req, res, db);
+        }
+    })
 });
 
 function listarUsuarios(req, res, db){
-    var name = req.session.username;
     db.all(
         'SELECT email, username, role FROM users',
         function(err, rows){
@@ -85,26 +90,38 @@ function listarUsuarios(req, res, db){
     )
 };
 
-router.get('/api/categorias', function(req, res){
-    listarCategorias(req, res, db);
+router.get('/api/categorias', verifyToken,function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else{
+            listarCategorias(req, res, db);
+        }
+    })
 });
 
 function listarCategorias(req, res, db){
-    var name = req.session.username;
     db.all(
-        'SELECT name FROM categorias WHERE creator=?', name,
+        'SELECT name FROM categorias',
         function(err, rows){
             res.json(rows);
         }
     )
 };
 
-router.get('/api/videos', function(req, res){
-    listarVideos(req, res, db);
+router.get('/api/videos', verifyToken,function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else{
+            listarVideos(req, res, db);
+        }
+    })
 });
 
 function listarVideos(req, res, db){
-    var name = req.session.username;
     db.all(
         'SELECT name, url, category FROM videos',
         function(err, rows){
@@ -113,19 +130,25 @@ function listarVideos(req, res, db){
     )
 };
 
-router.post('/api/users', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
-    }
-    else{
-        crearUsuarios(req, res, db);
-    }
+router.post('/api/users', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+        }
+        else{
+            crearUsuarios(req, res, db);
+        }
+    })
+    
 });
 
 function crearUsuarios(req, res, db){
-    var role = 'user';
+    var rol_nuevo = 'user';
     db.get(
-        'INSERT INTO users (email, password, username, role) VALUES (?,?,?,?)', req.body.email, req.body.password, req.body.username, role,
+        'INSERT INTO users (email, password, username, role) VALUES (?,?,?,?)', req.body.email, req.body.password, req.body.username, rol_nuevo,
         function(err){
             if(err == true || req.body.email == undefined || req.body.password == undefined || req.body.username == undefined){
                 res.json({Error: 'Error al crear usuario'});
@@ -137,17 +160,23 @@ function crearUsuarios(req, res, db){
     )
 };
 
-router.post('/api/categorias', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
-    }
-    else{
-        crearCategorias(req, res, db);
-    }
+router.post('/api/categorias', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+        }
+        else{
+            crearCategorias(req, res, db);
+        }
+    })
+    
 });
 
 function crearCategorias(req, res, db){
-    var creator = req.session.username;
+    var creator = username;
     var name = req.body.name;
     db.get(
         'INSERT INTO categorias (name, creator) VALUES (?,?)', name, creator,
@@ -161,18 +190,24 @@ function crearCategorias(req, res, db){
         }
 )};
 
-router.post('/api/videos', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar videos'});
-    }
-    else{
-        crearVideos(req, res, db);
-    }
+router.post('/api/videos', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar videos'});
+        }
+        else{
+            crearVideos(req, res, db);
+        }
+    })
+    
 });
 
 function crearVideos(req, res, db){
     var name = req.body.name;
-    var creator = req.session.username;
+    var creator = username;
     var url = req.body.url;
     var category = req.body.category;
 
@@ -198,13 +233,19 @@ function crearVideos(req, res, db){
         }
 )};
 
-router.put('/api/users', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
-    }
-    else{
-        modificarUsuarios(req, res, db);
-    }
+router.put('/api/users', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+        }
+        else{
+            modificarUsuarios(req, res, db);
+        }
+    })
+    
 });
 
 function modificarUsuarios(req, res, db){
@@ -234,19 +275,25 @@ function modificarUsuarios(req, res, db){
         }
 )};
 
-router.put('/api/categorias', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
-    }
-    else{
-        modificarCategorias(req, res, db);
-    }
+router.put('/api/categorias', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+        }
+        else{
+            modificarCategorias(req, res, db);
+        }
+    })
+    
 });
 
 function modificarCategorias(req, res, db){
     var old_name = req.body.old_name;
     var new_name = req.body.new_name;
-    var creator = req.session.username;
+    var creator = username;
     
     db.get(
         'SELECT * FROM categorias WHERE name=?', old_name,
@@ -270,13 +317,19 @@ function modificarCategorias(req, res, db){
             }
 )};
     
-router.put('/api/videos', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar videos'});
-    }
-    else{
-        modificarVideos(req, res, db);
-    }
+router.put('/api/videos', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar videos'});
+        }
+        else{
+            modificarVideos(req, res, db);
+        }
+    })
+    
 });
 
 function modificarVideos(req, res, db){
@@ -284,7 +337,7 @@ function modificarVideos(req, res, db){
     var new_name = req.body.new_name;
     var url = req.body.url;
     var category = req.body.category;
-    var creator = req.session.username;
+    var creator = username;
     db.get(
         'SELECT * FROM categorias WHERE name=?', category,
             function(err, row){
@@ -308,13 +361,19 @@ function modificarVideos(req, res, db){
 
 )};
 
-router.delete('/api/users', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
-    }
-    else{
-        eliminarUsuarios(req, res, db);
-    }
+router.delete('/api/users', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+        }
+        else{
+            eliminarUsuarios(req, res, db);
+        }
+    })
+    
 });
 
 function eliminarUsuarios(req, res, db){
@@ -341,13 +400,19 @@ function eliminarUsuarios(req, res, db){
         }
 )};
 
-router.delete('/api/categorias', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar categorias'});
-    }
-    else{
-        eliminarCategorias(req, res, db);
-    }
+router.delete('/api/categorias', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+        }
+        else{
+            eliminarCategorias(req, res, db);
+        }
+    })
+    
 });
 
 function eliminarCategorias(req, res, db){
@@ -363,13 +428,19 @@ function eliminarCategorias(req, res, db){
         }
 )};
 
-router.delete('/api/videos', function(req, res){
-    if(req.session.role != 'admin'){
-        res.json({Error: 'No puede crear, eliminar o modificar vídeos'});
-    }
-    else{
-        eliminarVideos(req, res, db);
-    }
+router.delete('/api/videos', verifyToken, function(req, res){
+    jwt.verify(req.token, 'secretKey', (error, authData) => {
+        if(error){
+            res.sendStatus(403);
+        }
+        else if(role != 'admin'){
+            res.json({Error: 'No puede crear, eliminar o modificar videos'});
+        }
+        else{
+            eliminarVideos(req, res, db);
+        }
+    })
+    
 });
 
 function eliminarVideos(req, res, db){
@@ -384,6 +455,19 @@ function eliminarVideos(req, res, db){
             }
         }
 )};
+
+//Autorización necesaria para el token
+function verifyToken(req, res, next){
+    const bearerHeader = req.headers['authorization'];
+    if(typeof bearerHeader !== 'undefined'){
+        const bearerToken = bearerHeader.split(" ")[1];
+        req.token = bearerToken;
+        next();
+    }
+    else{
+        res.sendStatus(403);
+    }
+}
 
 server.use(express.static('.'));
 server.use(router);

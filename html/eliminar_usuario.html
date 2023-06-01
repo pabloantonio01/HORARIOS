@@ -1,32 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-    <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Página de registro">
-        <meta name="author" content="Hecho por José Gadea Rodríguez, Pablo Antonio Martínez Vicente y Javier García García">
-
-        <title>Eliminar usuario</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
-        <script src="/js/administrar_usuarios.js"></script>
-
-</head>
-
 <body>
-    <h1>Eliminar usuario</h1>
-    <div ng-app="administracion_usuarios">
-        <div ng-controller="users">
-            <label>
-                ID usuario:<input type="text" ng-model="id_user">
-            </label><br>
-            <button ng-click="eliminarUsuario()">Eliminar usuario</button>
-        </div>
-    </div>
+<div ng-controller="RegistroController">
+    <form ng-submit="eliminarUsuario()">
+        <label>
+            Correo electrónico:
+            <input type="email" ng-model="user.correo" id="inputEmail" required>
+        </label><br>
+        <button type="submit">Eliminar</button>
+    </form>
+</div>
 </body>
-
-
-</html>

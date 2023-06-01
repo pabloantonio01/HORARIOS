@@ -1,0 +1,15 @@
+<body>
+    <div ng-controller="RegistroController">
+        <form ng-submit="modificarCategoria()">
+            <label>
+                Nombre antiguo de la categoría:
+                <input type="text" ng-model="categoria.nombre" id="inputCategoriaAntiguo" required>
+            </label><br>
+            <label>
+                Nombre nuevo:
+                <input type="text" ng-model="categoria.nombre" id="inputCategoriaNuevo" required>
+            </label><br>
+            <button type="submit">Modificar</button>
+        </form>
+    </div>
+    </body>

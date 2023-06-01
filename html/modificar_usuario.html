@@ -1,35 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-    <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Página de registro">
-        <meta name="author" content="Hecho por José Gadea Rodríguez, Pablo Antonio Martínez Vicente y Javier García García">
-
-        <title>Modificar usuario</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
-        <script src="/js/administrar_usuarios.js"></script>
-
-</head>
-
 <body>
-    <h1>Modificar usuario</h1>
-    <div ng-app="administracion_usuarios">
-        <div ng-controller="users">
+    <div ng-controller="RegistroController">
+        <form ng-submit="modificarUsuario()">
             <label>
-                ID usuario:<input type="text" ng-model="id_user">
+                Correo electrónico antiguo:
+                <input type="email" ng-model="user.correo" id="inputEmail" required>
             </label><br>
             <label>
-                Nombre nuevo:<input type="text" ng-model="new_name">
+                Nombre antiguo:
+                <input type="text" ng-model="user.nombre" id="inputName" required>
             </label><br>
-            <button ng-click="modificarUsuario()">Modificar usuario</button>
-        </div>
+            <label>
+                Contraseña antigua:
+                <input type="password" ng-model="user.password" id="inputPassword" required>
+            </label><br>
+            <label>
+                Nombre nuevo:
+                <input type="text" ng-model="user.nombre" id="inputName" required>
+            </label><br>
+            <label>
+                Contraseña nueva:
+                <input type="password" ng-model="user.password" id="inputPassword" required>
+            </label><br>
+            <button type="submit">Modificar</button>
+        </form>
     </div>
-</body>
-
-
-</html>
+    </body>
