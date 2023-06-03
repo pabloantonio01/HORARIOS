@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const sqlite3 = require('sqlite3').verbose();
 const port = 3000;
+const cors = require('cors');
+server.use(cors());
 const router = express.Router();
 var username = null;
 var role = null;
