@@ -12,12 +12,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-sanitize.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
         <script src="/js/login.js"></script>
+        
+        <!-- Enlace a archivos CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/themes.css">
+        <link rel="stylesheet" type="text/css" href="/css/charset.css">
 
     </head>
 
     <body>
-        <h1>Página de registro</h1>
-        <div ng-app='registro'>
+        <h1 id="titulo">Página de registro</h1>
+        <div ng-app='registro' id="formulario">
             <div ng-controller='reg'>
                 <label>
                     Correo electrónico:<input type="email" ng-model="email">

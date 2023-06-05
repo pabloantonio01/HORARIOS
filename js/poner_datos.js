@@ -118,6 +118,51 @@ registro.config(function($routeProvider) {
 registro.controller('RegistroController', function($scope, $location){
   // código del controlador
 
+  // Para cargar información sobre usuarios
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch("http://127.0.0.1:3000/api/users", requestOptions)
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log('error', error));
+
+  //Para cargar información sobre categorías
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log('error', error));
+
+  //Para cargar información sobre vídeos
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log('error', error));
+
   $scope.ocultarVista = function() {
     
     $location.path('/');

@@ -12,7 +12,6 @@ const cors = require('cors');
 server.use(cors());
 const router = express.Router();
 var username = null;
-var role = null;
 
 /* Configuración del servidor*/
 server.use(bodyParser.urlencoded({ extended: false }));
@@ -57,7 +56,6 @@ function processLogin(req, res, db){
             }
             else{
                 username = row.username;
-                role = row.role;
                 jwt.sign({username}, 'secretKey', {expiresIn: '1h'}, (err, token) => {
                     var data = {
                         email: row.email,
@@ -87,7 +85,8 @@ function listarUsuarios(req, res, db){
     db.all(
         'SELECT email, username, role FROM users',
         function(err, rows){
-            res.json(rows);
+            var data = rows;
+            res.json(data);
         }
     )
 };
@@ -107,7 +106,8 @@ function listarCategorias(req, res, db){
     db.all(
         'SELECT name FROM categorias',
         function(err, rows){
-            res.json(rows);
+            var data = rows;
+            res.json(data);
         }
     )
 };
@@ -127,7 +127,8 @@ function listarVideos(req, res, db){
     db.all(
         'SELECT name, url, category FROM videos',
         function(err, rows){
-            res.json(rows);
+            var data = rows;
+            res.json(data);
         }
     )
 };
@@ -135,10 +136,8 @@ function listarVideos(req, res, db){
 router.post('/api/users', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
-            res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
+            res.sendStatus(403);
         }
         else{
             crearUsuarios(req, res, db);
@@ -165,10 +164,8 @@ function crearUsuarios(req, res, db){
 router.post('/api/categorias', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
-            res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar categorias'});
+            res.sendStatus(403);
         }
         else{
             crearCategorias(req, res, db);
@@ -196,8 +193,6 @@ router.post('/api/videos', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar videos'});
         }
         else{
@@ -239,8 +234,6 @@ router.put('/api/users', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
         }
         else{
@@ -281,8 +274,6 @@ router.put('/api/categorias', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar categorias'});
         }
         else{
@@ -323,8 +314,6 @@ router.put('/api/videos', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar videos'});
         }
         else{
@@ -367,8 +356,6 @@ router.delete('/api/users', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar usuarios'});
         }
         else{
@@ -406,8 +393,6 @@ router.delete('/api/categorias', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar categorias'});
         }
         else{
@@ -434,8 +419,6 @@ router.delete('/api/videos', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
         if(error){
             res.sendStatus(403);
-        }
-        else if(role != 'admin'){
             res.json({Error: 'No puede crear, eliminar o modificar videos'});
         }
         else{
