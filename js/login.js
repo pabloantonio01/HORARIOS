@@ -45,7 +45,7 @@ angular.module('registro', []).controller('reg', function($scope){
             localStorage.setItem('Token', result.secret_token)
             localStorage.setItem('Rol', result.role)
 
-            if(localStorage.getItem("Rol")== "USER_ROLE"){
+            if(localStorage.getItem("Rol")== "user"){
                  window.location.href="/html/pagina_videos.html"
             }
             else{

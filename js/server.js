@@ -56,7 +56,7 @@ function processLogin(req, res, db){
             }
             else{
                 username = row.username;
-                jwt.sign({username}, 'secretKey', {expiresIn: '1h'}, (err, token) => {
+                jwt.sign({username}, 'secretKey', {expiresIn: '2h'}, (err, token) => {
                     var data = {
                         email: row.email,
                         username: row.username,
