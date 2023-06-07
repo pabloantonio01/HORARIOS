@@ -87,7 +87,7 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="s in usuarios">
-                                            <td>Nombre: {{s.username}}, Email: {{s.email}}, Rol: {{s.role}}</td>
+                                            <td>Nombre: {{s.username}}, Email: {{s.email}}, Rol: {{s.role}}, ID: {{S.user_id}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -99,7 +99,7 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="s in categorias">
-                                            <td>Nombre: {{s.name}}</td>
+                                            <td>Nombre: {{s.name}}, ID: {{s.id}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -111,7 +111,7 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="s in videos">
-                                            <td><a type="button" class="btn btn-primary" href={{s.url}}>{{s.name}}</a> Categoría: {{s.category}}, URL: {{s.url}}</td>
+                                            <td><a type="button" class="btn btn-primary" href={{s.url}}>{{s.name}}</a> Categoría: {{s.category}}, URL: {{s.url}}, ID: {{s.id}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

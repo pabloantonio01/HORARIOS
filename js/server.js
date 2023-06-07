@@ -58,6 +58,7 @@ function processLogin(req, res, db){
                 username = row.username;
                 jwt.sign({username}, 'secretKey', {expiresIn: '2h'}, (err, token) => {
                     var data = {
+                        id: row.user_id,
                         email: row.email,
                         username: row.username,
                         role: row.role,
@@ -83,7 +84,7 @@ router.get('/api/users', verifyToken,function(req, res){
 
 function listarUsuarios(req, res, db){
     db.all(
-        'SELECT email, username, role FROM users',
+        'SELECT email, username, role, user_id FROM users',
         function(err, rows){
             var data = rows;
             res.json(data);
@@ -104,7 +105,7 @@ router.get('/api/categorias', verifyToken,function(req, res){
 
 function listarCategorias(req, res, db){
     db.all(
-        'SELECT name FROM categorias',
+        'SELECT name, id FROM categorias',
         function(err, rows){
             var data = rows;
             res.json(data);
@@ -125,7 +126,7 @@ router.get('/api/videos', verifyToken,function(req, res){
 
 function listarVideos(req, res, db){
     db.all(
-        'SELECT name, url, category FROM videos',
+        'SELECT * FROM videos',
         function(err, rows){
             var data = rows;
             res.json(data);
