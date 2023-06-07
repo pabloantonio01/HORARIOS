@@ -1,19 +1,31 @@
 <body>
-<div ng-controller="RegistroController">
-    <form ng-submit="registrarUsuario()">
-        <label>
-            Nombre:
-            <input type="text" ng-model="user.nombre" id="inputName" required>
-        </label><br>
-        <label>
-            Correo electrónico:
-            <input type="email" ng-model="user.correo" id="inputEmail" required>
-        </label><br>
-        <label>
-            Contraseña:
-            <input type="password" ng-model="user.password" id="inputPassword" required>
-        </label><br>
-        <button type="submit">Registrar</button>
-    </form>
-</div>
-</body>
+    <div ng-controller="RegistroController" class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <form ng-submit="registrarUsuario()">
+                            <div class="form-group">
+                                <label for="inputName">Nombre:</label>
+                                <input type="text" class="form-control" ng-model="user.nombre" id="inputName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail">Correo electrónico:</label>
+                                <input type="email" class="form-control" ng-model="user.correo" id="inputEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPassword">Contraseña:</label>
+                                <input type="password" class="form-control" ng-model="user.password" id="inputPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Registrar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    

@@ -48,3 +48,41 @@ body {
 #formulario button:hover {
     background-color: #0056b3;
 }
+
+#Fila_principal {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 15px;
+}
+
+#Crear,
+#Modificar,
+#Eliminar {
+    background-color: #f9f9f9;
+    padding: 15px;
+}
+
+#Tabla_datos {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#inputName,
+#inputEmail,
+#inputPassword {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+
+#relative{
+    position: relative; top: 30px;
+
+}
+
+#relative2{
+    position: relative; top: 10px;
+
+}

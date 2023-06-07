@@ -1,11 +1,22 @@
 <body>
-    <div ng-controller="RegistroController">
-        <form ng-submit="eliminarCategoria()">
-            <label>
-                Nombre de la categoría:
-                <input type="text" ng-model="categoria.nombre" id="inputName" required>
-            </label><br>
-            <button type="submit">Eliminar</button>
-        </form>
+    <div ng-controller="RegistroController" class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Eliminar Categoría</h3>
+                    </div>
+                    <div class="card-body">
+                        <form ng-submit="eliminarCategoria()">
+                            <div class="form-group">
+                                <label for="inputName">Nombre de la categoría:</label>
+                                <input type="text" class="form-control" ng-model="categoria.nombre" id="inputName" required>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    </body>
+</body>

@@ -1,15 +1,26 @@
 <body>
-    <div ng-controller="RegistroController">
-        <form ng-submit="modificarCategoria()">
-            <label>
-                Nombre antiguo de la categoría:
-                <input type="text" ng-model="categoria.nombre" id="inputCategoriaAntiguo" required>
-            </label><br>
-            <label>
-                Nombre nuevo:
-                <input type="text" ng-model="categoria.nombre" id="inputCategoriaNuevo" required>
-            </label><br>
-            <button type="submit">Modificar</button>
-        </form>
+    <div ng-controller="RegistroController" class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Modificar Categoría</h3>
+                    </div>
+                    <div class="card-body">
+                        <form ng-submit="modificarCategoria()">
+                            <div class="form-group">
+                                <label for="inputCategoriaAntiguo">Nombre antiguo de la categoría:</label>
+                                <input type="text" class="form-control" ng-model="categoria.nombre" id="inputCategoriaAntiguo" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputCategoriaNuevo">Nombre nuevo:</label>
+                                <input type="text" class="form-control" ng-model="categoria.nombre" id="inputCategoriaNuevo" required>
+                            </div>
+                            <button id="relative2" type="submit" class="btn btn-primary">Modificar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    </body>
+</body>
