@@ -72,10 +72,6 @@ obtenerDatos.controller('datos', function($scope){
   }
 });
 
-
-
-
-
 var registro = angular.module('registro', ['ngRoute']);
 registro.config(function($routeProvider) {
   $routeProvider
@@ -186,10 +182,87 @@ registro.config(function($routeProvider) {
     });
 });
 registro.controller('RegistroController', function($scope, $location){
-  // código del controlador
+
+  //Función para crear usuarios
+  $scope.registrarUsuario = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "email": $scope.user.email,
+      "password": $scope.user.password,
+      "username": $scope.user.name 
+    });
+
+    console.log($scope.user.name);
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/users", requestOptions)
+        .then(response => response.json())
+        .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+        .catch(error => console.log('error', error));
+  }
+
+  //Función para modificar usuarios
+  $scope.modificarUsuario = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+    var raw = JSON.stringify({
+      "old_name": $scope.user.old_name,
+      "new_name": $scope.user.name,
+      "email": $scope.user.email,
+      "password": $scope.user.password
+    });
+
+    var requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/users", requestOptions)
+      .then(response => response.text())
+      .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+      .catch(error => console.log('error', error));
+  }
+
+  // Función para eliminar usuarios
+  $scope.eliminarUsuario = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+    var raw = JSON.stringify({
+      "name": $scope.user.name
+    });
+
+    var requestOptions = {
+      method: 'DELETE',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/users", requestOptions)
+      .then(response => response.text())
+      .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+      .catch(error => console.log('error', error));
+  }
+
 });
-
-
 
 // Aquí creamos el módulo principal que depende de los otros dos módulos
 angular.module('mainApp', ['ObtenerDatos', 'registro']);

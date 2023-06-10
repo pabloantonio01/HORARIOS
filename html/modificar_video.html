@@ -10,19 +10,19 @@
                         <form ng-submit="modificarVideo()">
                             <div class="form-group">
                                 <label for="inputURL">URL:</label>
-                                <input type="url" class="form-control" ng-model="video.URL" id="inputURL" required>
+                                <input type="url" class="form-control" ng-model="video.url" id="inputURL" required>
                             </div>
                             <div class="form-group">
                                 <label for="inputNameAntiguo">ID:</label>
-                                <input type="number" class="form-control" ng-model="video.id" id="inputNameAntiguo" required>
+                                <input type="number" class="form-control" ng-model="video.video_id" id="inputNameAntiguo" required>
                             </div>
                             <div class="form-group">
                                 <label for="inputNameNuevo">Nombre nuevo del vídeo:</label>
-                                <input type="text" class="form-control" ng-model="video.nombre" id="inputNameNuevo" required>
+                                <input type="name" class="form-control" ng-model="video.name" id="inputNameNuevo" required>
                             </div>
                             <div class="form-group">
                                 <label for="inputCategoriaNueva">Categoría nueva:</label>
-                                <input type="text" class="form-control" ng-model="video.categoria" id="inputCategoriaNueva" required>
+                                <input type="name" class="form-control" ng-model="video.categoria" id="inputCategoriaNueva" required>
                             </div>
                             <button id="relative2" type="submit" class="btn btn-primary">Modificar</button>
                         </form>

@@ -248,18 +248,18 @@ function modificarUsuarios(req, res, db){
     var email = req.body.email;
     var contraseña = req.body.password;
     var new_name = req.body.new_name;
-    var id = req.body.id;
+    var old_name = req.body.old_name;
     db.get(
-        'SELECT * FROM users WHERE user_id=?', id,
+        'SELECT * FROM users WHERE username=?', old_name,
         function(err, row){
             if(err || row == undefined){
                 res.json({Error: 'Usuario inexistente en la base de datos'});
             }
             else{
                 db.get(
-                    'UPDATE users SET email=?, password=?, username=? WHERE user_id=?', email, contraseña, new_name, id,
+                    'UPDATE users SET email=?, password=?, username=? WHERE username=?', email, contraseña, new_name, old_name,
                     function(err){
-                        if(err == true || email == undefined || contraseña == undefined || new_name == undefined, id == undefined){
+                        if(err == true || email == undefined || contraseña == undefined || new_name == undefined){
                             res.json({Error: 'Error al modificar usuario'});
                         }
                         else{
@@ -285,25 +285,25 @@ router.put('/api/categorias', verifyToken, function(req, res){
 });
 
 function modificarCategorias(req, res, db){
-    var id = req.body.id;
+    var old_name = req.body.old_name;
     var new_name = req.body.new_name;
     var creator = username;
     
     db.get(
-        'SELECT * FROM categorias WHERE id=?', id,
+        'SELECT * FROM categorias WHERE name=?', old_name,
             function(err, row){
                 if(err || row == undefined){
                     res.json({Error: 'Categoría inexistente en la base de datos'});
                 }
                 else{
                     db.get(
-                        'UPDATE categorias SET name=?, creator=? WHERE id=?', new_name, creator, id,
+                        'UPDATE categorias SET name=?, creator=? WHERE name=?', new_name, creator, old_name,
                             function(err){
                                 if(err == true || new_name == undefined){
                                     res.json({Error: 'Error al modificar categoría'});
                                 }
                                 else{
-                                        res.json('Categoría modificada correctamente');
+                                        res.json({Bien: 'Categoría modificada correctamente'});
                                 }
                             }
                     )
@@ -325,7 +325,7 @@ router.put('/api/videos', verifyToken, function(req, res){
 });
 
 function modificarVideos(req, res, db){
-    var id = req.body.id;
+    var old_name = req.body.old_name;
     var new_name = req.body.new_name;
     var url = req.body.url;
     var category = req.body.category;
@@ -338,13 +338,13 @@ function modificarVideos(req, res, db){
                 }
                 else{
                     db.get(
-                        'UPDATE videos SET name=?, creator=?, url=? WHERE id=?', new_name, creator, url, id,
+                        'UPDATE videos SET name=?, creator=?, url=? WHERE name=?', new_name, creator, url, old_name,
                             function(err){
-                                if(err == true || new_name == undefined || id == undefined || url == undefined){
+                                if(err == true || new_name == undefined || url == undefined){
                                     res.json({Error: 'Error al modificar vídeo'});
                                 }
                                 else{
-                                        res.json('Vídeo modificado correctamente');
+                                        res.json({Bien: 'Vídeo modificado correctamente'});
                                 }
                             }
                     )
@@ -367,16 +367,16 @@ router.delete('/api/users', verifyToken, function(req, res){
 });
 
 function eliminarUsuarios(req, res, db){
-    var id = req.body.id;
+    var name = req.body.name;
     db.get(
-        'SELECT * FROM users WHERE user_id=?', id,
+        'SELECT * FROM users WHERE username=?', name,
         function(err, row){
             if(err || row == undefined){
                 res.json({Error: 'Usuario inexistente en la base de datos'});
             }
             else{
                 db.get(
-                    'DELETE FROM users WHERE user_id=?', id,
+                    'DELETE FROM users WHERE username=?', name,
                     function(err){
                         if(err == true){
                             res.json({Error: 'Error al eliminar usuario'});
@@ -404,17 +404,29 @@ router.delete('/api/categorias', verifyToken, function(req, res){
 });
 
 function eliminarCategorias(req, res, db){
-    var id = req.body.id;
-    db.get('DELETE FROM categorias WHERE id=?', id,
-        function(err){
-            if(err){
-                res.json({Error: 'Error al eliminar categoría'});
-            }
-            else{
-                res.json({Bien: 'Categoría eliminada'});
-            }
-        }
+    var name = req.body.name;
+        db.get(
+            'SELECT * FROM categorias WHERE name=?', name,
+            function(err, row){
+                if(err || row == undefined){
+                    res.json({Error: 'Categoría inexistente en la base de datos'});
+                }
+                else{
+                    db.get(
+                        'DELETE FROM categorias WHERE name=?', name,
+                        function(err){
+                            if(err == true){
+                                res.json({Error: 'Error al eliminar categoria'});
+                            }
+                            else{
+                                res.json({Bien: 'Categoría eliminada'});
+                            }
+                        }
+                    )
+                }
+    }
 )};
+    
 
 router.delete('/api/videos', verifyToken, function(req, res){
     jwt.verify(req.token, 'secretKey', (error, authData) => {
@@ -430,16 +442,27 @@ router.delete('/api/videos', verifyToken, function(req, res){
 });
 
 function eliminarVideos(req, res, db){
-    var id = req.body.id;
-    db.get('DELETE FROM videos WHERE id=?', id,
-        function(err){
-            if(err){
-                res.json({Error: 'Error al eliminar vídeo'});
+    var name = req.body.name;
+    db.get(
+        'SELECT * FROM videos WHERE name=?', name,
+        function(err, row){
+            if(err || row == undefined){
+                res.json({Error: 'Vídeo inexistente en la base de datos'});
             }
             else{
-                res.json({Bien: 'Vídeo eliminado'});
+                db.get(
+                    'DELETE FROM videos WHERE name=?', name,
+                    function(err){
+                        if(err == true){
+                            res.json({Error: 'Error al eliminar Vídeo'});
+                        }
+                        else{
+                            res.json({Bien: 'Vídeo eliminada'});
+                        }
+                    }
+                )
             }
-        }
+}
 )};
 
 //Autorización necesaria para el token

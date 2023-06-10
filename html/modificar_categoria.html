@@ -10,11 +10,11 @@
                         <form ng-submit="modificarCategoria()">
                             <div class="form-group">
                                 <label for="inputCategoriaAntiguo">ID:</label>
-                                <input type="number" class="form-control" ng-model="categoria.id" id="inputCategoriaAntiguo" required>
+                                <input type="number" class="form-control" ng-model="categoria.categoria_id" id="inputCategoriaAntiguo" required>
                             </div>
                             <div class="form-group">
                                 <label for="inputCategoriaNuevo">Nombre nuevo:</label>
-                                <input type="text" class="form-control" ng-model="categoria.nombre" id="inputCategoriaNuevo" required>
+                                <input type="name" class="form-control" ng-model="categoria.name" id="inputCategoriaNuevo" required>
                             </div>
                             <button id="relative2" type="submit" class="btn btn-primary">Modificar</button>
                         </form>
