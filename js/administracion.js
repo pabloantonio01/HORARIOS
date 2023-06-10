@@ -262,84 +262,84 @@ registro.controller('RegistroController', function($scope, $location){
       .catch(error => console.log('error', error));
   }
 
-//Función para crear videos
-$scope.registrarVideo = function(){
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
-  myHeaders.append("Content-Type", "application/json");
+  //Función para crear videos
+  $scope.registrarVideo = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+    myHeaders.append("Content-Type", "application/json");
 
-  var raw = JSON.stringify({
-    "name": $scope.video.name,
-    "url": $scope.video.url,
-    "category": $scope.video.categoria 
-  });
+    var raw = JSON.stringify({
+      "name": $scope.video.name,
+      "url": $scope.video.url,
+      "category": $scope.video.categoria 
+    });
 
-  console.log($scope.video.name);
+    console.log($scope.video.name);
 
-  var requestOptions = {
-      method: 'POST',
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+        .then(response => response.json())
+        .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+        .catch(error => console.log('error', error));
+  }
+
+  //Función para modificar videos
+  $scope.modificarVideo = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+    var raw = JSON.stringify({
+      "old_name": $scope.video.old_name,
+      "new_name": $scope.video.name,
+      "url": $scope.video.url,
+      "category": $scope.video.categoria
+    });
+
+    var requestOptions = {
+      method: 'PUT',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
-  };
+    };
 
-  fetch("http://127.0.0.1:3000/api/videos", requestOptions)
-      .then(response => response.json())
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+      .then(response => response.text())
       .then(result => {console.log(result)
-      window.location.href="/html/pagina_de_administrador.html"})
+        window.location.href="/html/pagina_de_administrador.html"})
       .catch(error => console.log('error', error));
-}
+  }
 
-//Función para modificar videos
-$scope.modificarVideo = function(){
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+  // Función para eliminar videos
+  $scope.eliminarVideo = function(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
 
-  var raw = JSON.stringify({
-    "old_name": $scope.video.old_name,
-    "new_name": $scope.video.name,
-    "url": $scope.video.url,
-    "category": $scope.video.categoria
-  });
+    var raw = JSON.stringify({
+      "name": $scope.video.name
+    });
 
-  var requestOptions = {
-    method: 'PUT',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
+    var requestOptions = {
+      method: 'DELETE',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
 
-  fetch("http://127.0.0.1:3000/api/videos", requestOptions)
-    .then(response => response.text())
-    .then(result => {console.log(result)
-      window.location.href="/html/pagina_de_administrador.html"})
-    .catch(error => console.log('error', error));
-}
-
-// Función para eliminar videos
-$scope.eliminarVideo = function(){
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
-
-  var raw = JSON.stringify({
-    "name": $scope.video.name
-  });
-
-  var requestOptions = {
-    method: 'DELETE',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
-
-  fetch("http://127.0.0.1:3000/api/videos", requestOptions)
-    .then(response => response.text())
-    .then(result => {console.log(result)
-      window.location.href="/html/pagina_de_administrador.html"})
-    .catch(error => console.log('error', error));
-}
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+      .then(response => response.text())
+      .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+      .catch(error => console.log('error', error));
+  }
 
 });
 
