@@ -266,19 +266,33 @@ registro.controller('RegistroController', function($scope, $location){
       .catch(error => console.log('error', error));
   }
 
+<<<<<<< HEAD
   // Función Crear Categorías
   $scope.registrarCategoria = function(){
     console.log($scope.categoria.name);
+=======
+  //Función para crear videos
+  $scope.registrarVideo = function(){
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
     var myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
+<<<<<<< HEAD
       "name": $scope.categoria.name
       
     });
 
     // console.log($scope.user.name);
+=======
+      "name": $scope.video.name,
+      "url": $scope.video.url,
+      "category": $scope.video.categoria 
+    });
+
+    console.log($scope.video.name);
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
 
     var requestOptions = {
         method: 'POST',
@@ -287,27 +301,45 @@ registro.controller('RegistroController', function($scope, $location){
         redirect: 'follow'
     };
 
+<<<<<<< HEAD
     fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+=======
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
         .then(response => response.json())
         .then(result => {console.log(result)
         window.location.href="/html/pagina_de_administrador.html"})
         .catch(error => console.log('error', error));
   }
 
+<<<<<<< HEAD
   //Función para modificar categorias
   $scope.modificarCategoria = function(){
     console.log($scope.categoria.old_name);
+=======
+  //Función para modificar videos
+  $scope.modificarVideo = function(){
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
 
     var raw = JSON.stringify({
+<<<<<<< HEAD
       "old_name": $scope.categoria.old_name,
       "new_name": $scope.categoria.new_name
       
     });
 
     console.log(raw);
+=======
+      "old_name": $scope.video.old_name,
+      "new_name": $scope.video.name,
+      "url": $scope.video.url,
+      "category": $scope.video.categoria
+    });
+
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
     var requestOptions = {
       method: 'PUT',
       headers: myHeaders,
@@ -315,22 +347,35 @@ registro.controller('RegistroController', function($scope, $location){
       redirect: 'follow'
     };
 
+<<<<<<< HEAD
     fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+=======
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
       .then(response => response.text())
       .then(result => {console.log(result)
         window.location.href="/html/pagina_de_administrador.html"})
       .catch(error => console.log('error', error));
   }
 
+<<<<<<< HEAD
   // Función para eliminar categorias
   $scope.eliminarCategoria = function(){
     console.log($scope.categoria.name);
+=======
+  // Función para eliminar videos
+  $scope.eliminarVideo = function(){
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
 
     var raw = JSON.stringify({
+<<<<<<< HEAD
       "name": $scope.categoria.name
+=======
+      "name": $scope.video.name
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
     });
 
     var requestOptions = {
@@ -340,7 +385,11 @@ registro.controller('RegistroController', function($scope, $location){
       redirect: 'follow'
     };
 
+<<<<<<< HEAD
     fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+=======
+    fetch("http://127.0.0.1:3000/api/videos", requestOptions)
+>>>>>>> 923ca8b1d186f4e1adbcf2fd414b4c15cf945340
       .then(response => response.text())
       .then(result => {console.log(result)
         window.location.href="/html/pagina_de_administrador.html"})
