@@ -183,6 +183,10 @@ registro.config(function($routeProvider) {
 });
 registro.controller('RegistroController', function($scope, $location){
 
+  $scope.ocultarVista = function() {
+    $location.path('/');
+  }
+
   //Función para crear usuarios
   $scope.registrarUsuario = function(){
     var myHeaders = new Headers();
@@ -256,6 +260,87 @@ registro.controller('RegistroController', function($scope, $location){
     };
 
     fetch("http://127.0.0.1:3000/api/users", requestOptions)
+      .then(response => response.text())
+      .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+      .catch(error => console.log('error', error));
+  }
+
+  // Función Crear Categorías
+  $scope.registrarCategoria = function(){
+    console.log($scope.categoria.name);
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "name": $scope.categoria.name
+      
+    });
+
+    // console.log($scope.user.name);
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+        .then(response => response.json())
+        .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+        .catch(error => console.log('error', error));
+  }
+
+  //Función para modificar categorias
+  $scope.modificarCategoria = function(){
+    console.log($scope.categoria.old_name);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+    var raw = JSON.stringify({
+      "old_name": $scope.categoria.old_name,
+      "new_name": $scope.categoria.new_name
+      
+    });
+
+    console.log(raw);
+    var requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
+      .then(response => response.text())
+      .then(result => {console.log(result)
+        window.location.href="/html/pagina_de_administrador.html"})
+      .catch(error => console.log('error', error));
+  }
+
+  // Función para eliminar categorias
+  $scope.eliminarCategoria = function(){
+    console.log($scope.categoria.name);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+    var raw = JSON.stringify({
+      "name": $scope.categoria.name
+    });
+
+    var requestOptions = {
+      method: 'DELETE',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:3000/api/categorias", requestOptions)
       .then(response => response.text())
       .then(result => {console.log(result)
         window.location.href="/html/pagina_de_administrador.html"})
