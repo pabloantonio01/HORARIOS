@@ -25,7 +25,7 @@ server.use(bodyParser.json());
 //     }       
 // );
 
-const db = new Database('datos.db');
+const db = new sqlite3('datos.db');
 
 
 server.get('/', function(req, res) {
