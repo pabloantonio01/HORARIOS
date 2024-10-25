@@ -6,7 +6,7 @@ const server = express();
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require('better-sqlite3').verbose();
 const port = process.env.PORT || 3000;
 const cors = require('cors');
 server.use(cors());
