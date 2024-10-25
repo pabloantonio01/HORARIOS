@@ -4,11 +4,10 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.7"
   },
   "scripts": {
     "start": "node server.js",
-    "vercel-build": "npm install && node server.js"
-}
-
+    "vercel-build": "node server.js"
+  }
 }
