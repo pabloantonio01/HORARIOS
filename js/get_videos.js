@@ -20,6 +20,7 @@ app.controller('myCtrl', function($scope, $http, $sce) {
     });
 
     $scope.openVideo = function(url) {
+        console.log(url);
         window.open(url);
     };
 
@@ -27,6 +28,7 @@ app.controller('myCtrl', function($scope, $http, $sce) {
     
 
     $scope.getEmbedUrl = function(url) {
+        console.log(url);
         return $sce.trustAsResourceUrl(url);
     };
 });

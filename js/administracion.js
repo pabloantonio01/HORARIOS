@@ -1,5 +1,10 @@
 "use strict";
 
+
+
+
+
+
 var obtenerDatos = angular.module('ObtenerDatos', []);  // Cambia 'Obtener datos' a 'ObtenerDatos'
 obtenerDatos.controller('datos', function($scope){
 
@@ -431,6 +436,11 @@ $scope.eliminarVideo = function(){
         window.location.href="/html/pagina_de_administrador.html"})
       .catch(error => console.log('error', error));
   }
+
+
+
+
+
 
 });
 

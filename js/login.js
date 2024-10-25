@@ -38,21 +38,49 @@ angular.module('registro', []).controller('reg', function($scope){
         redirect: 'follow'
         };
     
+        // fetch("http://127.0.0.1:3000/api/auth/login", requestOptions)
+        // .then(response => response.json())
+        // .then(
+        //     result => {console.log(result.secret_token)
+        //     localStorage.setItem('Token', result.secret_token)
+        //     localStorage.setItem('Rol', result.role)
+
+        //     if(localStorage.getItem("Rol")== "user"){
+        //          window.location.href="/html/horarios.html"
+        //     }
+        //     else{
+        //         window.location.href="/html/horarios.html"
+        //     }
+        //     })
+        //     .catch(error => console.log('error', error));
+
         fetch("http://127.0.0.1:3000/api/auth/login", requestOptions)
         .then(response => response.json())
-        .then(
-            result => {console.log(result.secret_token)
-            localStorage.setItem('Token', result.secret_token)
-            localStorage.setItem('Rol', result.role)
+        .then(result => {
+            // Verificamos si hay un error en la respuesta
+            if (result.Error) {
+                // Si hay un error, mostramos un mensaje al usuario
+                alert(result.Error); // Muestra el mensaje de error
+            } else {
+                // Si el login fue exitoso, guardamos el token y redirigimos
+                console.log(result.secret_token);
+                localStorage.setItem('Token', result.secret_token);
+                localStorage.setItem('role', result.role);
 
-            if(localStorage.getItem("Rol")== "user"){
-                 window.location.href="/html/pagina_videos.html"
+                if (localStorage.getItem("role") === "admin") {
+                    window.location.href = "/html/horarios_administrador.html";
+                } else {
+                    window.location.href = "/html/horarios.html"; // Puedes ajustar esta parte según tus necesidades
+                }
             }
-            else{
-                window.location.href="/html/pagina_de_administrador.html"
-            }
-            })
-            .catch(error => console.log('error', error));
+        })
+        .catch(error => console.log('error', error));
+
+
+
+
+
+
     };
 
 });
