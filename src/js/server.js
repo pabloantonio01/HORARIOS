@@ -25,13 +25,7 @@ server.use(bodyParser.json());
 //     }       
 // );
 
-let db = new sqlite3.Database('./datos.db', (err) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos:', err.message);
-    } else {
-        console.log('Conectado a la base de datos SQLite.');
-    }
-});
+const db = new Database('datos.db');
 
 
 server.get('/', function(req, res) {
