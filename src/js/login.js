@@ -54,7 +54,7 @@ angular.module('registro', []).controller('reg', function($scope){
         //     })
         //     .catch(error => console.log('error', error));
 
-        fetch("http://127.0.0.1:3000/api/auth/login", requestOptions)
+        fetch("https://infinity-rho-umber.vercel.app/api/auth/login", requestOptions)
         .then(response => response.json())
         .then(result => {
             // Verificamos si hay un error en la respuesta
