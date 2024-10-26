@@ -6,26 +6,55 @@ const server = express();
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const sqlite3 = require('better-sqlite3');
+const { Pool } = require('pg'); // PostgreSQL
 const port = process.env.PORT || 3000;
 const cors = require('cors');
+
 server.use(cors());
 const router = express.Router();
 var username = null;
 
-/* Configuración del servidor*/
+/* Configuración del servidor */
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
 
-// var db = new sqlite3.Database(
-//     'datos.db',
-//     function(err){
-//         if (err) // Si ha ocurrido un error
-//             console.log(err);
-//     }       
-// );
+// Configuración de la conexión a la base de datos
+const DATABASE_USER = "default";
+const DATABASE_HOST = "ep-misty-pine-a2eqdx6d-pooler.eu-central-1.aws.neon.tech";
+const DATABASE_PASSWORD = "Dtbd4kjgL5VR";
+const DATABASE_DATABASE = "verceldb"; // Nombre de la base de datos
+const DATABASE_PORT = 5432;
 
-const db = new sqlite3('datos.db');
+// Configurar el pool de conexión a PostgreSQL
+const pool = new Pool({
+    user: DATABASE_USER,
+    host: DATABASE_HOST,
+    database: DATABASE_DATABASE,
+    password: DATABASE_PASSWORD,
+    port: DATABASE_PORT,
+    ssl: { rejectUnauthorized: false }
+});
+
+// Probar la conexión a la base de datos
+pool.connect((err) => {
+    if (err) {
+        console.error('Error al conectar con PostgreSQL:', err.stack);
+    } else {
+        console.log('Conexión exitosa a PostgreSQL');
+    }
+});
+
+// Aquí va tu lógica de rutas y demás...
+
+
+
+
+server.get('/', function (req, res) {
+  res.send('Hola Mundo!');
+});
+
+// Aquí puedes agregar más rutas, reemplazando las consultas de SQLite con PostgreSQL
+
 
 
 server.get('/', function(req, res) {
@@ -56,8 +85,8 @@ router.post('/api/horario', verifyToken, function(req, res) {
                 return res.json({ Error: 'Petición mal formada' });
             } else {
                 // Comprobar si el usuario ya está en la tabla horarios
-                db.get(
-                    'SELECT * FROM horarios WHERE usuario = ?',
+                pool.query(
+                    'SELECT * FROM horarios WHERE nombre_usuario = $1',
                     [req.user],  // Asumiendo que req.user contiene el nombre del usuario
                     function(err, row) {
                         if (err) {
@@ -69,8 +98,8 @@ router.post('/api/horario', verifyToken, function(req, res) {
                         
                         if (row) {
                             // Si se encontró una fila, realizamos la segunda consulta para verificar el tipo de usuario
-                            db.get(
-                                'SELECT tipo FROM users WHERE nombre_usuario = ?', 
+                            pool.query(
+                                'SELECT tipo FROM users WHERE nombre_usuario = $1', 
                                 [req.user], 
                                 function(err, userRow) {
                                     if (err) {
@@ -79,10 +108,10 @@ router.post('/api/horario', verifyToken, function(req, res) {
                                     }
                         
                                     // Comprobamos si el tipo es 'admin'
-                                    if (userRow && userRow.tipo === 'admin') {
+                                    if (userRow && userRow.rows[0].tipo === 'admin') {
                                         // Si el usuario es administrador, permitimos registrar la hora
                                         console.log('Es administrador, permitiendo el registro de hora');
-                                        processHour(req, res, db);
+                                        processHour(req, res, pool);
                                     } else {
                                         // Si no es administrador, enviamos el mensaje de error
                                         return res.json({ error: 'Error: ya está guardado' });
@@ -93,7 +122,7 @@ router.post('/api/horario', verifyToken, function(req, res) {
                             // Si el usuario no está en la tabla horarios, llamamos a processHour directamente
                             console.log(row);
                             console.log(req);
-                            processHour(req, res, db);
+                            processHour(req, res, pool);
                         }
                         
                         
@@ -107,21 +136,27 @@ router.post('/api/horario', verifyToken, function(req, res) {
 });
 
 
-function processHour(req, res, db) {
-    // Supongamos que guardas la hora y aula en la base de datos
-    const usuario= req.user; 
+function processHour(req, res, pool) {
+    const usuario = req.user; 
     const aula = req.body.aula;
     const hora = req.body.hora;
-    db.get('INSERT INTO horarios (aula, hora, usuario) VALUES (?, ?, ?)', aula, hora, usuario, (error, results) => {
-        if (error) {
-            console.error('Error al insertar en la base de datos:', error);
-            return res.status(500).json({ Error: 'Error en el servidor' });
-        }
 
-        // Responde con éxito
-        res.json({ success: true, message: 'Hora registrada', data: { aula, hora, usuario } });
-    });
+    // Inserta en la base de datos
+    pool.query(
+        'INSERT INTO horarios (aulas, horario, nombre_usuario) VALUES ($1, $2, $3)',
+        [aula, hora, usuario], // Aquí se debe pasar un array con los parámetros
+        (error, results) => {
+            if (error) {
+                console.error('Error al insertar en la base de datos:', error);
+                return res.status(500).json({ Error: 'Error en el servidor' });
+            }
+
+            // Responde con éxito
+            res.json({ success: true, message: 'Hora registrada', data: { aula, hora, usuario } });
+        }
+    );
 }
+
 
 
 router.get('/api/know/horario', verifyToken,function(req, res){
@@ -130,21 +165,20 @@ router.get('/api/know/horario', verifyToken,function(req, res){
             res.sendStatus(403);
         }
         else{
-            listarHorario(req, res, db);
+            listarHorario(req, res, pool);
         }
     })
 });
 
-function listarHorario(req, res, db){
-    db.all(
-        'SELECT aula, hora FROM horarios',
-        function(err, rows){
-            var data = rows;
-            res.json(data);
+function listarHorario(req, res, pool) {
+    pool.query('SELECT aulas, horario FROM horarios', (err, result) => {
+        if (err) {
+            console.error('Error al consultar la base de datos:', err);
+            return res.status(500).json({ error: 'Error al consultar la base de datos' });
         }
-    )
-};
-
+        res.json(result.rows); // Asegúrate de enviar result.rows, no solo "rows"
+    });
+}
 
 
 
@@ -157,8 +191,8 @@ router.get('/api/know/horario/completo', verifyToken, function(req, res) {
             req.user = authData.username; // Guardar el nombre de usuario
             
             // Comprobación de tipo de usuario
-            db.get(
-                'SELECT tipo FROM users WHERE nombre_usuario = ?', 
+            pool.query(
+                'SELECT tipo FROM users WHERE nombre_usuario = $1', 
                 [req.user], 
                 function(err, userRow) {
                     if (err) {
@@ -166,10 +200,15 @@ router.get('/api/know/horario/completo', verifyToken, function(req, res) {
                         return res.status(500).json({ error: 'Error en el servidor' });
                     }
 
+                    // Comprobamos si se encontró el usuario
+                    if (userRow.rows.length === 0) {
+                        return res.status(404).json({ error: 'Usuario no encontrado' });
+                    }
+
                     // Comprobamos si el tipo es 'admin'
-                    if (userRow.tipo === 'admin') {
+                    if (userRow.rows[0].tipo === 'admin') { // Accede a la primera fila
                         // Si el usuario es admin, llamamos a listarHorarioCompleto
-                        listarHorarioCompleto(req, res, db);
+                        listarHorarioCompleto(req, res, pool);
                     } else {
                         // Si no es admin, devolvemos un error o restringimos el acceso
                         res.status(403).json({ error: 'No tienes permisos para ver esta información' });
@@ -181,15 +220,19 @@ router.get('/api/know/horario/completo', verifyToken, function(req, res) {
 });
 
 
-function listarHorarioCompleto(req, res, db){
-    db.all(
-        'SELECT aula, hora, usuario FROM horarios',
-        function(err, rows){
-            var data = rows;
-            res.json(data);
-        }
-    )
-};
+
+function listarHorarioCompleto(req, res, pool) {
+    pool.query('SELECT aulas, horario, nombre_usuario FROM horarios')
+        .then(result => {
+            res.json(result.rows);
+        })
+        .catch(err => {
+            console.error('Error al consultar la base de datos:', err);
+            res.status(500).json({ error: 'Error en el servidor' });
+        });
+}
+
+
 
 
 
@@ -201,27 +244,23 @@ router.get('/api/know/horariotuyo', verifyToken,function(req, res){
             res.sendStatus(403);
         }
         else{
-            listarHorariotuyo(req, res, db);
+            listarHorariotuyo(req, res, pool);
         }
     })
 });
 
-function listarHorariotuyo(req, res, db) {
-    // Asegúrate de que req.user tenga el valor correcto
-    db.all(
-        'SELECT aula, hora FROM horarios WHERE usuario = ?',
-        [req.user], // Aquí filtramos por el usuario
-        function(err, rows) {
-            if (err) {
-                console.error('Error al consultar la base de datos:', err);
-                return res.status(500).json({ error: 'Error en el servidor' });
-            }
-
-            var data = rows;
-            res.json(data);
-        }
-    );
+function listarHorariotuyo(req, res, pool) {
+    pool.query(
+        'SELECT aulas, horario FROM horarios WHERE nombre_usuario = $1',
+        [req.user]
+    ).then(result => {
+        res.json(result.rows);
+    }).catch(err => {
+        console.error('Error al consultar la base de datos:', err);
+        res.status(500).json({ error: 'Error en el servidor' });
+    });
 }
+
 
 
 
@@ -231,14 +270,14 @@ router.delete('/api/know/horario/borrar', verifyToken, function(req, res) {
         if (error) {
             return res.sendStatus(403);
         } else {
-            borrarHorario(req, res, db);
+            borrarHorario(req, res, pool);
         }
     });
 });
 
-function borrarHorario(req, res, db) {
-    db.run(
-        'DELETE FROM horarios WHERE usuario = ?',
+function borrarHorario(req, res, pool) {
+    pool.query(
+        'DELETE FROM horarios WHERE nombre_usuario = $1',
         [req.user], // Filtrar por el usuario
         function(err) {
             if (err) {
@@ -265,53 +304,55 @@ function borrarHorario(req, res, db) {
 /* Configurar rutas y funciones necesarias del API REST*/
 router.post('/api/auth/login', function(req, res){
     console.log('Realizando registro');
-    console.log(req);
-    if(req.body.email==undefined || req.body.password==undefined){
-        res.json({Error: 'Petición mal formada'});
+    console.log(req.body); // Cambié a req.body para ver el contenido
+    if(req.body.email === undefined || req.body.password === undefined){
+        return res.json({Error: 'Petición mal formada'});
     }
-    else{
-        res = processLogin(req, res, db);
-    }
+    processLogin(req, res, pool); // Eliminado el res = porque processLogin ya lo maneja
 });
 
-function processLogin(req, res, db) {
-    var email = req.body.email;
-    var password = req.body.password;
+function processLogin(req, res, pool) {
+    const email = req.body.email;
+    const password = req.body.password;
     console.log(email);
     console.log(password);
 
-    db.get('SELECT * FROM users WHERE correo = ?', [email], function(err, row) {
+    pool.query('SELECT * FROM users WHERE correo = $1', [email], (err, result) => { // Cambié ? por $1
         if (err) {
             console.error('Error al consultar la base de datos:', err);
             return res.status(500).json({ Error: 'Error en el servidor' });
         }
 
-        if (!row) {
+        if (result.rows.length === 0) { // Cambié row por result y verifiqué la longitud
             return res.json({ Error: 'Usuario no existe' });
-        } else if (row.contraseña !== password) {
+        } 
+        
+        const row = result.rows[0]; // Obtengo la primera fila de los resultados
+        if (row.contrasena !== password) {
             return res.json({ Error: 'Contraseña mal introducida' });
-        } else {
-            const username = row.nombre_usuario;
-            console.log(username);
+        } 
+        
+        const username = row.nombre_usuario;
+        console.log(username);
 
-            jwt.sign({ username }, 'secretKey', { expiresIn: '2h' }, (err, token) => {
-                if (err) {
-                    console.error('Error al generar el token:', err);
-                    return res.status(500).json({ Error: 'Error al generar el token' });
-                }
+        jwt.sign({ username }, 'secretKey', { expiresIn: '2h' }, (err, token) => {
+            if (err) {
+                console.error('Error al generar el token:', err);
+                return res.status(500).json({ Error: 'Error al generar el token' });
+            }
 
-                var data = {
-                    email: row.correo,
-                    username: row.nombre_usuario,
-                    role: row.tipo,
-                    secret_token: token // Corregido: usar "token", no "tokens"
-                };
-                console.log('Login correcto');
-                res.json(data);
-            });
-        }
+            var data = {
+                email: row.correo,
+                username: row.nombre_usuario,
+                role: row.tipo,
+                secret_token: token
+            };
+            console.log('Login correcto');
+            res.json(data);
+        });
     });
 };
+
 
 
 
@@ -332,9 +373,15 @@ function verifyToken(req, res, next){
 server.use(express.static('.'));
 server.use(router);
 
-server.listen(port, function(){
-    console.log(`Servidor corriendo por el puerto ${port}`);
+// Iniciar el servidor
+server.listen(port, (err) => {
+    if (err) {
+        console.error(`Error al iniciar el servidor en el puerto ${port}:`, err);
+        process.exit(1); // Termina el proceso si hay un error
+    }
+    console.log(`Servidor escuchando en el puerto ${port}`);
 });
+
 
 
 
