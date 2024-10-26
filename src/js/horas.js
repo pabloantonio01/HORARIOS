@@ -94,6 +94,7 @@ obtenerhora.controller('datos', function($scope) {
         fetch("http://localhost:3000/api/know/horario", requestOptions)
         .then((response) => response.json())
         .then(data => {
+            console.log(data);
             // Asumiendo que el servidor devuelve un array de objetos con información sobre las aulas ocupadas
             $scope.ocupadas = data;  // Asegúrate de que esta sea la estructura correcta
             $scope.$apply();  // Descomentar si es necesario para forzar el ciclo digest
@@ -109,7 +110,7 @@ obtenerhora.controller('datos', function($scope) {
             return false; // Si no se han cargado las aulas, por defecto no estará ocupada
         }
         return $scope.ocupadas.some(function(ocupada) {
-            return ocupada.aula === aula && ocupada.hora === hora;
+            return ocupada.aulas === aula && ocupada.horario === hora;
         });
     };
 
@@ -178,23 +179,25 @@ obtenerhora.controller('datos', function($scope) {
                 fetch("http://localhost:3000/api/know/horario/completo", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
+
+                    console.log(result);
                     // Ordenar y agrupar primero por el día (Sábado primero, luego Domingo), luego por aula, y finalmente por hora
                     result.sort((a, b) => {
                         // Extraer la última letra de la hora para identificar S (Sábado) y D (Domingo)
-                        const dayA = a.hora.slice(-1); // S o D
-                        const dayB = b.hora.slice(-1); // S o D
+                        const dayA = a.horario.slice(-1); // S o D
+                        const dayB = b.horario.slice(-1); // S o D
                 
                         // Comparar días (Sábado primero, luego Domingo)
                         if (dayA === 'S' && dayB === 'D') return -1;
                         if (dayA === 'D' && dayB === 'S') return 1;
                 
                         // Si los días son iguales, comparar las aulas
-                        if (a.aula < b.aula) return -1;
-                        if (a.aula > b.aula) return 1;
+                        if (a.aulas < b.aulas) return -1;
+                        if (a.aulas > b.aulas) return 1;
                 
                         // Si las aulas son iguales, comparar las horas
-                        if (a.hora < b.hora) return -1;
-                        if (a.hora > b.hora) return 1;
+                        if (a.horario < b.horario) return -1;
+                        if (a.horario > b.horario) return 1;
                 
                         // Si tanto los días, aulas y horas son iguales, son equivalentes
                         return 0;
@@ -202,6 +205,8 @@ obtenerhora.controller('datos', function($scope) {
                 
                     // Guardamos el JSON recibido en $scope.horariosOcupados
                     $scope.horariosOcupados = result;
+
+                    console.log($scope.horariosOcupados);
                     $scope.$apply();  // Forzamos a AngularJS a actualizar la vista
                 })
                 
