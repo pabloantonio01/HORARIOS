@@ -91,7 +91,7 @@ obtenerhora.controller('datos', function($scope) {
             redirect: "follow"
         };
     
-        fetch("http://localhost:3000/api/know/horario", requestOptions)
+        fetch("https://server-horarios.vercel.app/api/know/horario", requestOptions)
         .then((response) => response.json())
         .then(data => {
             console.log(data);
@@ -127,7 +127,7 @@ obtenerhora.controller('datos', function($scope) {
             redirect: "follow"
         };
 
-        fetch("http://localhost:3000/api/know/horariotuyo", requestOptions)
+        fetch("https://server-horarios.vercel.app/api/know/horariotuyo", requestOptions)
         .then((response) => response.json())
         .then((result) => {
             $scope.tuhorario = result; // Guarda el resultado en $scope.tuhorario
@@ -152,7 +152,7 @@ obtenerhora.controller('datos', function($scope) {
     //     redirect: "follow"
     //     };
 
-    //     fetch("http://localhost:3000/api/know/horario/borrar", requestOptions)
+    //     fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
     //     .then((response) => response.json())
     //     .then((result) => console.log(result))
     //     .catch((error) => console.error(error));
@@ -176,7 +176,7 @@ obtenerhora.controller('datos', function($scope) {
                     redirect: "follow"
                 };
 
-                fetch("http://localhost:3000/api/know/horario/completo", requestOptions)
+                fetch("https://server-horarios.vercel.app/api/know/horario/completo", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
 
@@ -254,7 +254,7 @@ obtenerhora.controller('datos', function($scope) {
                 redirect: "follow"
             };
 
-            fetch("http://localhost:3000/api/know/horario/borrar", requestOptions)
+            fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     console.log(result);
