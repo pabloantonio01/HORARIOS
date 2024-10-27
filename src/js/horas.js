@@ -60,7 +60,7 @@ obtenerhora.controller('datos', function($scope) {
             redirect: 'follow'
         };
 
-        fetch("http://127.0.0.1:3000/api/horario", requestOptions)
+        fetch("https://server-horarios.vercel.app/api/horario", requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log(result);
