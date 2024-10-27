@@ -3,7 +3,7 @@
 var obtenerhora = angular.module('hora', []); 
 obtenerhora.controller('datos', function($scope) {
     // Lista de horas
-    $scope.horas = ['10:00-14:00 S', '14:00-16:00 S', '16:00-20:00 S', '10:00-14:00 D', '14:00-16:00 D', '16:00-20:00 D'];
+    $scope.horas = ['10:00-14:00 S', '16:00-20:00 S', '16:00-20:00 D'];
 
     // Variables para controlar la selección
     $scope.selectedClass = null;
