@@ -32,16 +32,11 @@ obtenerhora.controller('datos', function($scope) {
         
     };
     
+
+    $scope.obtenerHorario();
     
     
 
-
-
-
-
-
-    const horariovacio = ['10:00-12:00 S', '16:00-18:00 S', '16:00-18:00 D'];
-    const horariolleno = ['10:00-12:00 S','12:00-14:00 S', '16:00-18:00 S', '18:00-20:00 S', '16:00-18:00 D', '18:00-20:00 D'];
 
 
     // Variables para controlar la selección
