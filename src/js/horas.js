@@ -3,7 +3,46 @@
 var obtenerhora = angular.module('hora', []); 
 obtenerhora.controller('datos', function($scope) {
     // Lista de horas
-    $scope.horas = ['10:00-14:00 S', '16:00-20:00 S', '16:00-20:00 D'];
+    $scope.obtenerHorario = function() {
+        const horariovacio = ['10:00-12:00 S', '16:00-18:00 S', '16:00-18:00 D'];
+        const horariolleno = ['10:00-12:00 S','12:00-14:00 S', '16:00-18:00 S', '18:00-20:00 S', '16:00-18:00 D', '18:00-20:00 D'];
+
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + localStorage.getItem('Token'));
+
+        const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+        };
+
+        fetch("https://server-horarios.vercel.app/api/know/nun_horario", requestOptions)
+        .then((response) => response.text())
+        .then((result) =>{
+                console.log(result);
+
+                if (result.resultado == true) {
+                    return $scope.horas = horariolleno;
+                } else {
+                    return $scope.horas = horariovacio;
+                }
+            })
+        .catch((error) => console.error(error));
+
+        
+    };
+    
+    
+    
+
+
+
+
+
+
+    const horariovacio = ['10:00-12:00 S', '16:00-18:00 S', '16:00-18:00 D'];
+    const horariolleno = ['10:00-12:00 S','12:00-14:00 S', '16:00-18:00 S', '18:00-20:00 S', '16:00-18:00 D', '18:00-20:00 D'];
+
 
     // Variables para controlar la selección
     $scope.selectedClass = null;
