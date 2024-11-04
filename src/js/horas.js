@@ -17,17 +17,20 @@ obtenerhora.controller('datos', function($scope) {
         };
 
         fetch("https://server-horarios.vercel.app/api/know/nun_horario", requestOptions)
-        .then((response) => response.text())
-        .then((result) =>{
-                console.log(result);
+        .then((response) => response.json())
+        .then((result) => {
+            console.log(result);
 
-                if (result.resultado == true) {
-                    return $scope.horas = horariolleno;
+            $scope.$apply(() => {
+                if (result.resultado === true) {
+                    $scope.horas = horariolleno;
                 } else {
-                    return $scope.horas = horariovacio;
+                    $scope.horas = horariovacio;
                 }
-            })
-        .catch((error) => console.error(error));
+            });
+        })
+        .catch((error) => console.error('Error en la solicitud:', error));
+
 
         
     };
