@@ -294,20 +294,12 @@ obtenerhora.controller('datos', function($scope) {
             fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
             .then((response) => {
                 if (!response.ok) {
+                    // Si la respuesta no es exitosa, intentamos obtener el error desde el cuerpo de la respuesta
                     return response.json().then((error) => {
-                        // Verificamos si el error es 400 y el mensaje del servidor
-                        if (error.error === 'La operación no se puede realizar, la variable HORA no está activa') {
-                            const token = localStorage.getItem('token');
-                            if (token) {
-                                const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
-                                const username = decodedToken.username; // Suponemos que el username está en el payload
-                                Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
-                            }
-                        }
-                        throw error; // Lanzamos el error para continuar el flujo de catch
+                        throw error; // Lanzamos el error para que lo maneje el catch
                     });
                 }
-                return response.json(); // Si todo es correcto, procesamos el resultado
+                return response.json(); // Si la respuesta es exitosa, procesamos la respuesta como JSON
             })
             .then((result) => {
                 console.log(result);
@@ -315,8 +307,20 @@ obtenerhora.controller('datos', function($scope) {
             })
             .catch((error) => {
                 console.error('Error:', error);
-                Swal.fire('Error inesperado!', '', 'error');
+
+                // Si el error es 400 y contiene el mensaje esperado
+                if (error.error === 'La operación no se puede realizar, la variable HORA no está activa') {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
+                        const username = decodedToken.username; // Suponemos que el username está en el payload
+                        Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
+                    }
+                } else {
+                    Swal.fire('Error inesperado!', '', 'error');
+                }
             });
+
 
         
 
