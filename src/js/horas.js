@@ -98,7 +98,14 @@ obtenerhora.controller('datos', function($scope) {
         };
 
         fetch("https://server-horarios.vercel.app/api/horario", requestOptions)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then((error) => {
+                        throw { status: response.status, ...error };  // Lanzamos el error con el código de estado
+                    });
+                }
+                return response.json();  // Si la respuesta es exitosa, procesamos la respuesta como JSON
+            })
             .then(result => {
                 console.log(result);
 
@@ -111,9 +118,23 @@ obtenerhora.controller('datos', function($scope) {
                 }
             })
             .catch(error => {
-                // En caso de un error inesperado
-                
-                console.log('error', error);
+                console.error('Error en el catch:', error);
+
+                // Si el error es 400, mostramos el mensaje personalizado
+                if (error.status === 402) {
+                    console.log("0");
+                    const token = localStorage.getItem('Token');
+                    if (token) {
+                        console.log("1");
+                        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
+                        const username = decodedToken.username; // Suponemos que el username está en el payload
+                        alert(`Notas la voz del Profesor Oak en tu cabeza... ¡${username}, cada cosa en su momento`, '', 'warning');
+                    }
+                } else {
+                    console.log("2");
+                    // Si es cualquier otro error, mostramos el mensaje genérico
+                    alert('Error inesperado!', '', 'error');
+                }
             });
     };
 
