@@ -309,7 +309,7 @@ obtenerhora.controller('datos', function($scope) {
                 console.error('Error:', error);
 
                 // Si el error es 400 y contiene el mensaje esperado
-                if (error.error === 'La operación no se puede realizar, la variable HORA no está activa') {
+                if (error === 'La operación no se puede realizar, la variable HORA no está activa') {
                     const token = localStorage.getItem('token');
                     if (token) {
                         const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
