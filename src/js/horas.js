@@ -292,25 +292,32 @@ obtenerhora.controller('datos', function($scope) {
             };
 
             fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                // Si el código de respuesta no es 2xx, se maneja como un error
-                if (result.error || response.status === 400) {
-                    const token = localStorage.getItem('token');
-                    if (token) {
-                        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
-                        const username = decodedToken.username; // Suponemos que el username está en el payload
-                        Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
-                    }
-                } else {
-                    console.log(result); // Si no hay error, mostramos el resultado
-                    Swal.fire('Horario borrado con éxito!', '', 'success');
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then((error) => {
+                        // Verificamos si el error es 400 y el mensaje del servidor
+                        if (error.error === 'La operación no se puede realizar, la variable HORA no está activa') {
+                            const token = localStorage.getItem('token');
+                            if (token) {
+                                const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
+                                const username = decodedToken.username; // Suponemos que el username está en el payload
+                                Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
+                            }
+                        }
+                        throw error; // Lanzamos el error para continuar el flujo de catch
+                    });
                 }
+                return response.json(); // Si todo es correcto, procesamos el resultado
+            })
+            .then((result) => {
+                console.log(result);
+                Swal.fire('Horario borrado con éxito!', '', 'success');
             })
             .catch((error) => {
                 console.error('Error:', error);
                 Swal.fire('Error inesperado!', '', 'error');
             });
+
         
 
 
