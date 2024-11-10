@@ -292,15 +292,28 @@ obtenerhora.controller('datos', function($scope) {
             };
 
             fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    console.log(result);
-                    Swal.fire('Horario borrado con éxito!', '', 'success');
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    Swal.fire('Error inesperado!', '', 'error');
-                });
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then((errorData) => {
+                        // Si el error es 400, mostramos el mensaje especial
+                        if (response.status === 400) {
+                            const username = errorData.username || 'Usuario desconocido'; // Obtén el nombre del usuario desde el error
+                            Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
+                        }
+                        throw new Error(errorData.error || 'Error inesperado'); // Lanza un error si hay algún problema
+                    });
+                }
+                return response.json(); // Si la respuesta es OK, continuar normalmente
+            })
+            .then((result) => {
+                console.log(result);
+                Swal.fire('Horario borrado con éxito!', '', 'success');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                Swal.fire('Error inesperado!', '', 'error');
+            });
+        
         }
     });
     
