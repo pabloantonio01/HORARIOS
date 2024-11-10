@@ -294,14 +294,8 @@ obtenerhora.controller('datos', function($scope) {
             fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result);
-                Swal.fire('Horario borrado con éxito!', '', 'success');
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-
-                // Si el error es 400, obtenemos el username del token y mostramos el mensaje
-                if (error.status === 400) {
+                // Si el código de respuesta no es 2xx, se maneja como un error
+                if (result.error || response.status === 400) {
                     const token = localStorage.getItem('token');
                     if (token) {
                         const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
@@ -309,9 +303,15 @@ obtenerhora.controller('datos', function($scope) {
                         Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
                     }
                 } else {
-                    Swal.fire('Error inesperado!', '', 'error');
+                    console.log(result); // Si no hay error, mostramos el resultado
+                    Swal.fire('Horario borrado con éxito!', '', 'success');
                 }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                Swal.fire('Error inesperado!', '', 'error');
             });
+        
 
 
         }
