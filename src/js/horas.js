@@ -296,7 +296,12 @@ obtenerhora.controller('datos', function($scope) {
                 if (!response.ok) {
                     // Si la respuesta no es exitosa, intentamos obtener el error desde el cuerpo de la respuesta
                     return response.json().then((error) => {
-                        throw error; // Lanzamos el error para que lo maneje el catch
+                        // Aquí verificamos si el código de estado es 400
+                        if (response.status === 400) {
+                            throw { error: 'La operación no se puede realizar, la variable HORA no está activa' }; // Lanza un error con un mensaje personalizado
+                        } else {
+                            throw error; // Lanza el error tal como lo devuelve el servidor
+                        }
                     });
                 }
                 return response.json(); // Si la respuesta es exitosa, procesamos la respuesta como JSON
@@ -308,8 +313,8 @@ obtenerhora.controller('datos', function($scope) {
             .catch((error) => {
                 console.error('Error:', error);
 
-                // Si el error es 400 y contiene el mensaje esperado
-                if (error === 'La operación no se puede realizar, la variable HORA no está activa') {
+                // Comprobamos si el error tiene el código 400 y el mensaje esperado
+                if (error && error.error === 'La operación no se puede realizar, la variable HORA no está activa') {
                     const token = localStorage.getItem('token');
                     if (token) {
                         const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
@@ -317,9 +322,11 @@ obtenerhora.controller('datos', function($scope) {
                         Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
                     }
                 } else {
+                    // Si no es el error esperado, mostramos un mensaje genérico
                     Swal.fire('Error inesperado!', '', 'error');
                 }
             });
+
 
 
         
