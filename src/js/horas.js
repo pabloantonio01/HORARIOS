@@ -292,32 +292,28 @@ obtenerhora.controller('datos', function($scope) {
             };
 
             fetch("https://server-horarios.vercel.app/api/know/horario/borrar", requestOptions)
-            .then((response) => {
-                if (!response.ok) {
-                    // Si la respuesta no es ok (por ejemplo, 400 o 500)
-                    return response.json().then((errorData) => {
-                        // Comprobamos si es un error 400
-                        if (response.status === 400) {
-                            const username = errorData.username || 'Usuario desconocido'; // Obtén el nombre del usuario desde el error
-                            Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
-                        }
-                        // En cualquier otro caso de error, lanzamos un error con el mensaje
-                        throw new Error(errorData.error || 'Error inesperado');
-                    });
-                }
-                // Si la respuesta es exitosa (status 200), continuamos con el flujo
-                return response.json();
-            })
+            .then((response) => response.json())
             .then((result) => {
                 console.log(result);
                 Swal.fire('Horario borrado con éxito!', '', 'success');
             })
             .catch((error) => {
-                console.error('Error:', error.message); // Asegúrate de que el mensaje del error se muestre correctamente
-                Swal.fire('Error inesperado!', '', 'error');
+                console.error('Error:', error);
+
+                // Si el error es 400, obtenemos el username del token y mostramos el mensaje
+                if (error.status === 400) {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
+                        const username = decodedToken.username; // Suponemos que el username está en el payload
+                        Swal.fire(`Escuchas la voz del profesor Oak diciendo: ${username}, cada cosa en su momento`, '', 'warning');
+                    }
+                } else {
+                    Swal.fire('Error inesperado!', '', 'error');
+                }
             });
 
-        
+
         }
     });
     
