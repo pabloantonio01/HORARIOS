@@ -67,7 +67,7 @@ angular.module('registro', []).controller('reg', function($scope){
                 localStorage.setItem('Token', result.secret_token);
                 localStorage.setItem('role', result.role);
 
-                if (localStorage.getItem("role") === "admin") {
+                if (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "consejero") {
                     window.location.href = "/html/horarios_administrador.html";
                 } else {
                     window.location.href = "/html/horarios.html"; // Puedes ajustar esta parte según tus necesidades

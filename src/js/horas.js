@@ -128,7 +128,7 @@ obtenerhora.controller('datos', function($scope) {
                         console.log("1");
                         const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
                         const username = decodedToken.username; // Suponemos que el username está en el payload
-                        alert(`Notas la voz del Profesor Oak en tu cabeza... ¡${username}, cada cosa en su momento`, '', 'warning');
+                        alert(`Notas la voz del Profesor Oak en tu cabeza... ¡${username}, cada cosa en su momento!`, '', 'warning');
                     }
                 } else {
                     console.log("2");
@@ -336,7 +336,7 @@ obtenerhora.controller('datos', function($scope) {
                         console.log("1");
                         const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificamos el token
                         const username = decodedToken.username; // Suponemos que el username está en el payload
-                        Swal.fire(`Notas la voz del Profesor Oak en tu cabeza... ¡${username}, cada cosa en su momento`, '', 'warning');
+                        Swal.fire(`Notas la voz del Profesor Oak en tu cabeza... ¡${username}, cada cosa en su momento!`, '', 'warning');
                     }
                 } else {
                     console.log("2");
