@@ -79,7 +79,7 @@ obtenerhora.controller('datos', function($scope) {
         }
     };
 
-    // Función para enviar la selección al servidor (POST request)
+    // Función para enviar la selección al servidor (POST request) MAMAHUEVO
     $scope.registrarHora = function() {
         console.log('HOLA MUNDO');
         var myHeaders = new Headers();
