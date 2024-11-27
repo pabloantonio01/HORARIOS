@@ -50,7 +50,7 @@ obtenerhora.controller('datos', function($scope) {
     $scope.seleccion = null; // Asegúrate de que esta variable esté en el scope
 
     // Función para seleccionar el aula y la hora
-    $scope.selectedClass = function(aula, hora) {
+    $scope.selectClass = function(aula, hora) {
         // Guardar la selección de aula y hora
         $scope.selectedClass = aula;
         $scope.selectedHora = hora;
