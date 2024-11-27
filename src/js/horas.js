@@ -50,34 +50,40 @@ obtenerhora.controller('datos', function($scope) {
     $scope.seleccion = null; // Asegúrate de que esta variable esté en el scope
 
     // Función para seleccionar el aula y la hora
-    $scope.selectClass = function(boton, hora) {
-        if ($scope.selectedClass === boton && $scope.selectedHora === hora) {
-            $scope.selectedClass = null;
-            $scope.selectedHora = null;
-        } else {
-            $scope.selectedClass = boton;
-            $scope.selectedHora = hora;
-        }
+    $scope.selectedClass = function(hora, aula) {
+        // Guardar automáticamente la selección al hacer clic
+        $scope.seleccion = { hora: hora, aula: aula };
+    
+        // Opcional: Puedes mostrar visualmente que se ha guardado
+        console.log("Selección guardada automáticamente:", $scope.seleccion);
     };
-
+    
     // Función para guardar la selección en la variable JSON
-    $scope.guardarSeleccion = function() {
-        if ($scope.selectedClass && $scope.selectedHora) {
-            $scope.seleccion = {  // Guardamos en $scope.seleccion
-                aula: $scope.selectedClass,
-                hora: $scope.selectedHora
-            };
-
-            // Muestra la selección en la consola
-            console.log("Selección guardada:", $scope.seleccion);
-
-            // Limpiar la selección
-            $scope.selectedClass = null;
-            $scope.selectedHora = null;
-        } else {
-            alert("Selecciona una hora y un aula antes de guardar.");
+    $scope.seleccionarAula = function() {
+        const { hora, aula } = $scope.seleccion;
+    
+        if (!hora || !aula) {
+            Swal.fire('Error', 'No has seleccionado un aula y horario.', 'error');
+            return;
         }
+    
+        Swal.fire({
+            title: '¿Confirmas esta selección?',
+            text: `Aula: ${aula}, Hora: ${hora}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Enviar la selección al servidor
+                $scope.registrarHora();
+            } else {
+                Swal.fire('Cancelado', 'No se realizó la acción.', 'info');
+            }
+        });
     };
+    
 
     // Función para enviar la selección al servidor (POST request) MAMAHUEVO
     $scope.registrarHora = function() {

@@ -47,69 +47,36 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>Horas</th>
-                        <th>B3</th>
-                        <th>B5</th>
-                        <th>B7</th>
-                        <th>B9</th>
+                        <th ng-repeat="aula in aulas">{{ aula }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="hora in horas">
-                        <td>{{hora}}</td>
-                        <td>
+                        <td>{{ hora }}</td>
+                        <td ng-repeat="aula in aulas">
                             <button class="btn" 
                                     ng-class="{
-                                        'btn-danger': estaOcupada('B3', hora), 
-                                        'btn-success': !estaOcupada('B3', hora) && (selectedClass !== 'B3' || selectedHora !== hora), 
-                                        'btn-warning': selectedClass === 'B3' && selectedHora === hora
+                                        'btn-danger': estaOcupada(aula, hora), 
+                                        'btn-success': !estaOcupada(aula, hora) && (selectedClass !== aula || selectedHora !== hora), 
+                                        'btn-warning': selectedClass === aula && selectedHora === hora
                                     }"
-                                    ng-disabled="estaOcupada('B3', hora)"
-                                    ng-click="selectClass('B3', hora)">B3</button>
-                        </td>
-                        <td>
-                            <button class="btn" 
-                                    ng-class="{
-                                        'btn-danger': estaOcupada('B5', hora), 
-                                        'btn-success': !estaOcupada('B5', hora) && (selectedClass !== 'B5' || selectedHora !== hora), 
-                                        'btn-warning': selectedClass === 'B5' && selectedHora === hora
-                                    }"
-                                    ng-disabled="estaOcupada('B5', hora)"
-                                    ng-click="selectClass('B5', hora)">B5</button>
-                        </td>
-                        <td>
-                            <button class="btn" 
-                                    ng-class="{
-                                        'btn-danger': estaOcupada('B7', hora), 
-                                        'btn-success': !estaOcupada('B7', hora) && (selectedClass !== 'B7' || selectedHora !== hora), 
-                                        'btn-warning': selectedClass === 'B7' && selectedHora === hora
-                                    }"
-                                    ng-disabled="estaOcupada('B7', hora)"
-                                    ng-click="selectClass('B7', hora)">B7</button>
-                        </td>
-                        <td>
-                            <button class="btn" 
-                                    ng-class="{
-                                        'btn-danger': estaOcupada('B9', hora), 
-                                        'btn-success': !estaOcupada('B9', hora) && (selectedClass !== 'B9' || selectedHora !== hora), 
-                                        'btn-warning': selectedClass === 'B9' && selectedHora === hora
-                                    }"
-                                    ng-disabled="estaOcupada('B9', hora)"
-                                    ng-click="selectClass('B9', hora)">B9</button>
+                                    ng-disabled="estaOcupada(aula, hora) || (deshabilitacion && estaOcupadaInmediatamenteSiguiente(aula, hora))"
+                                    ng-click="selectClass(aula, hora)">
+                                {{ aula }}
+                            </button>
                         </td>
                     </tr>
                 </tbody>
-                
             </table>
-            
-            <!-- Botón de aceptar -->
-            <button class="btn btn-success" ng-click="guardarSeleccion()">Aceptar</button>
+        </div>
         
-            <!-- Tabla para mostrar el JSON guardado (opcional, solo para visualización) -->
-            <h4>Selección guardada:</h4>
-            <pre>{{ seleccion | json }}</pre>
+            
+            
+            
 
 
-            <button class="btn btn-primary" ng-click="registrarHora()">Enviar selección</button>
+            <button class="btn btn-success" ng-click="seleccionarAula()">Aceptar</button>
+
 
 
 
