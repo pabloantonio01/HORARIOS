@@ -71,12 +71,28 @@ obtenerhora.controller('datos', function($scope) {
     
         // Guardar la selección en el objeto $scope.seleccion
         $scope.seleccion = { aula: $scope.selectedClass, hora: $scope.selectedHora };
-        
-        // Mostrar la selección guardada
-        console.log("Selección guardada:", $scope.seleccion);
-    
-        // Llamar a la función para registrar la selección
-        $scope.registrarHora();
+
+        // Verifica la asignación
+        console.log("Aula seleccionada:", $scope.seleccion.aula);
+        console.log("Hora seleccionada:", $scope.seleccion.hora);
+
+        // Mostrar el SweetAlert de confirmación con las variables directamente
+        Swal.fire({
+            title: '¿Confirmas esta selección?',
+            text: `Aula: ${$scope.seleccion.aula}, Hora: ${$scope.seleccion.hora}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Si se confirma, enviar la selección al servidor
+                $scope.registrarHora();
+            } else {
+                // Si se cancela, mostrar mensaje de cancelación
+                Swal.fire('Cancelado', 'No se realizó la acción.', 'info');
+            }
+        });
     };
     
     
