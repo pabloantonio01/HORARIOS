@@ -50,39 +50,35 @@ obtenerhora.controller('datos', function($scope) {
     $scope.seleccion = null; // Asegúrate de que esta variable esté en el scope
 
     // Función para seleccionar el aula y la hora
-    $scope.selectedClass = function(hora, aula) {
-        // Guardar automáticamente la selección al hacer clic
-        $scope.seleccion = { hora: hora, aula: aula };
-    
-        // Opcional: Puedes mostrar visualmente que se ha guardado
-        console.log("Selección guardada automáticamente:", $scope.seleccion);
+    $scope.selectedClass = function(aula, hora) {
+        // Guardar la selección de aula y hora
+        $scope.selectedClass = aula;
+        $scope.selectedHora = hora;
+        
+        // Para mostrar la selección actual en la consola o en la vista
+        console.log("Aula seleccionada:", $scope.selectedClass);
+        console.log("Hora seleccionada:", $scope.selectedHora);
     };
     
-    // Función para guardar la selección en la variable JSON
-    $scope.seleccionarAula = function() {
-        const { hora, aula } = $scope.seleccion;
     
-        if (!hora || !aula) {
-            Swal.fire('Error', 'No has seleccionado un aula y horario.', 'error');
+    // Función para guardar la selección en la variable JSON
+    $scope.guardarSeleccion = function() {
+        // Verificar si hay una selección
+        if (!$scope.selectedClass || !$scope.selectedHora) {
+            Swal.fire('Error', 'Por favor selecciona un aula y una hora.', 'error');
             return;
         }
     
-        Swal.fire({
-            title: '¿Confirmas esta selección?',
-            text: `Aula: ${aula}, Hora: ${hora}`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, confirmar',
-            cancelButtonText: 'Cancelar'
-        }).then(result => {
-            if (result.isConfirmed) {
-                // Enviar la selección al servidor
-                $scope.registrarHora();
-            } else {
-                Swal.fire('Cancelado', 'No se realizó la acción.', 'info');
-            }
-        });
+        // Guardar la selección en el objeto $scope.seleccion
+        $scope.seleccion = { aula: $scope.selectedClass, hora: $scope.selectedHora };
+        
+        // Mostrar la selección guardada
+        console.log("Selección guardada:", $scope.seleccion);
+    
+        // Llamar a la función para registrar la selección
+        $scope.registrarHora();
     };
+    
     
 
     // Función para enviar la selección al servidor (POST request) MAMAHUEVO
