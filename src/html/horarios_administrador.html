@@ -107,22 +107,26 @@
             
 
 
-            <button class="btn btn-success" ng-click="guardarSeleccion()">Aceptar</button>
-
-
-
-            <div>
-            <button class="btn btn-success" ng-click="tuhorario()">Saber tu horario</button>
-        
-            <!-- Tabla para mostrar el JSON guardado (opcional, solo para visualización) -->
-            <h4>Tu horario:</h4>
-            <pre>{{ tuhorario | json }}</pre>
-            </div>
-
-
-
-            <div>
-                <button class="btn btn-danger" id="borrarHorarioBtn">Borrar Horario Reservado</button>
+            <div class="container mt-4">
+                <!-- Botón de aceptar -->
+                <div class="mb-3 text-center">
+                    <button class="btn btn-success btn-lg" ng-click="guardarSeleccion()">Aceptar</button>
+                </div>
+            
+                <!-- Sección para saber el horario -->
+                <div class="card p-3 mb-4">
+                    <h4 class="text-center text-primary">Consulta tu horario</h4>
+                    <div class="text-center">
+                        <button class="btn btn-info btn-md mb-2" ng-click="tuhorario()">Saber tu horario</button>
+                    </div>
+                    <h5 class="text-secondary">Tu horario:</h5>
+                    <pre class="border p-2 bg-light rounded">{{ tuhorario | json }}</pre>
+                </div>
+            
+                <!-- Botón para borrar el horario reservado -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-danger btn-md" id="borrarHorarioBtn">Borrar Horario Reservado</button>
+                </div>
             </div>
             
             
