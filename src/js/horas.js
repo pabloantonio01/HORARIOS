@@ -341,8 +341,15 @@ obtenerhora.controller('datos', function($scope) {
             })
             .then((result) => {
                 console.log(result);
-                Swal.fire('Horario borrado con éxito!', '', 'success');
-                window.location.reload();
+                Swal.fire({
+                    title: 'Horario borrado con éxito!',
+                    text: '',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Recargar la página después de cerrar la alerta
+                    window.location.reload();
+                });
             })
             .catch((error) => {
                 console.error('Error en el catch:', error);
